@@ -1,11 +1,14 @@
 package woodle.backend.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-
-@XmlRootElement
 public class AppointmentWrapper {
     Appointment appointment;
+
+    public AppointmentWrapper() {
+    }
+
+    public AppointmentWrapper(Appointment appointment) {
+        this.appointment = appointment;
+    }
 
     public Appointment getAppointment() {
         return appointment;

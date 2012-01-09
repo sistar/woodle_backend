@@ -2,6 +2,7 @@ package woodle.backend.test.resource;
 
 import woodle.backend.model.AppointmentListing;
 import woodle.backend.model.Member;
+import static woodle.backend.rest.MemberResourceRESTService.APPLICATION_JSON;
 
 import javax.ws.rs.*;
 import java.util.List;
@@ -10,26 +11,28 @@ import java.util.List;
 public interface MemberClient {
     @PUT
     @Path("/{email}")
-    @Consumes("application/json")
+    @Consumes(APPLICATION_JSON)
     public void modifyMember(Member member);
 
     @POST
-    @Consumes("application/json")
+    @Consumes(APPLICATION_JSON)
     public void addMember(Member member);
 
     @GET
-    @Produces("text/xml")
+    @Produces(APPLICATION_JSON)
     public List<Member> listAllMembers();
 
     @GET
     @Path("/{id:[0-9][0-9]*}")
-    @Produces("text/xml")
+    @Produces(APPLICATION_JSON)
     public Member lookupMemberById(@PathParam("id") long id);
 
     @GET
     @Path("/{email}/appointments")
-    @Produces("application/json")
+    @Produces(APPLICATION_JSON)
+    @Consumes(APPLICATION_JSON)
     public AppointmentListing lookupAppointmentsForMemberEMail(@PathParam("email") String eMail);
+
 
 }
 

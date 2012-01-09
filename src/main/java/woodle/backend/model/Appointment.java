@@ -1,11 +1,8 @@
 package woodle.backend.model;
 
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-@XmlRootElement(name = "appointment")
 public class Appointment {
 
     private String title;

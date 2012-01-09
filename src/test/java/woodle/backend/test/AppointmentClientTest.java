@@ -24,9 +24,11 @@ import org.junit.runner.RunWith;
 import woodle.backend.data.UnkownMemberException;
 import woodle.backend.model.Appointment;
 import woodle.backend.model.AppointmentListing;
+import woodle.backend.model.AppointmentWrapper;
 import woodle.backend.model.Member;
 import woodle.backend.rest.AppointmentsResource;
 import woodle.backend.rest.JaxRsActivator;
+import woodle.backend.rest.ManagementResource;
 import woodle.backend.rest.MemberResourceRESTService;
 import woodle.backend.test.resource.AppointmentClient;
 import woodle.backend.test.resource.MemberClient;
@@ -46,14 +48,15 @@ public class AppointmentClientTest {
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, "woodle.backend.war").addPackage(Appointment.class.getPackage())
+        return ShrinkWrap.create(WebArchive.class, "woodle_backend.war").addPackage(Appointment.class.getPackage())
                 .addClasses(AppointmentsResource.class,
                         MemberResourceRESTService.class,
+                        ManagementResource.class,
                         JaxRsActivator.class,
                         woodle.backend.data.WoodleStore.class,
                         UnkownMemberException.class)
                        // .addAsManifestResource("persistence.xml")
-                        .addAsResource( "META-INF/persistence.xml")
+                        .addAsResource("META-INF/persistence.xml")
                         //.addAsResource("import.sql")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
@@ -75,11 +78,10 @@ public class AppointmentClientTest {
         } catch (DatatypeConfigurationException e) {
 
         }
-        APPOINTMENT_DATE = dtf.newXMLGregorianCalendar("2012-02-01T13:10:00");
+        APPOINTMENT_DATE = dtf.newXMLGregorianCalendar("2012-02-01T13:10:00.000+01:00");
     }
 
     AppointmentClient appointmentClient;
-
     MemberClient memberClient;
 
     @Test
@@ -93,7 +95,7 @@ public class AppointmentClientTest {
     }
 
     public static void createAppointment(AppointmentClient appointmentClient) {
-        appointmentClient.create(new Appointment("json Hacking", APPOINTMENT_DATE, SANTA_CLAUS_NO));
+        appointmentClient.create(new AppointmentWrapper( new Appointment("json Hacking", APPOINTMENT_DATE, SANTA_CLAUS_NO)));
     }
 
     public static void createMember( MemberClient memberClient) {

@@ -14,29 +14,23 @@ import woodle.backend.model.AppointmentListing;
 import woodle.backend.model.Member;
 import woodle.backend.model.MemberWrapper;
 
-/**
- * JAX-RS Example
- * <p/>
- * This class produces a RESTful service to read the contents of the members table.
- */
 @Path("/members")
 @RequestScoped
-@NoJackson
 public class MemberResourceRESTService {
+    public static final String APPLICATION_JSON = "application/json";
     @Inject
     private WoodleStore woodleStore;
 
 
     @PUT
     @Path("/{email}")
-    @Consumes("application/json")
+    @Consumes(APPLICATION_JSON)
     public void modifyMember(Member member) {
 
     }
 
     @POST
-    @Consumes("application/json")
-    @NoJackson
+    @Consumes(APPLICATION_JSON)
     public void addMember(Member member) {
         //Member member = memberWrapper.getMember();
 
@@ -48,7 +42,7 @@ public class MemberResourceRESTService {
 
 
     @GET
-    @Produces("text/xml")
+    @Produces(APPLICATION_JSON)
     public List<Member> listAllMembers() {
         // Use @SupressWarnings to force IDE to ignore warnings about "genericizing" the results of
         // this query
@@ -63,7 +57,7 @@ public class MemberResourceRESTService {
 
     @GET
     @Path("/{id:[0-9][0-9]*}")
-    @Produces("text/xml")
+    @Produces(APPLICATION_JSON)
     public Member lookupMemberById(@PathParam("id") long id) {
         //return em.find(Member.class, id);
         return null;
@@ -71,13 +65,14 @@ public class MemberResourceRESTService {
 
     @GET
     @Path("/{email}/appointments")
-    @Produces("application/json")
+    @Produces(APPLICATION_JSON)
     public AppointmentListing lookupAppointmentsForMemberEMail(@PathParam("email") String eMail) {
         AppointmentListing ret = woodleStore.appointmentsForUser(eMail);
         System.out.println("returning appointment listing containing " + ret.getAppointments().size() + " appointments");
         //return em.find(Member.class, id);
         return ret;
     }
+
 
 
 }

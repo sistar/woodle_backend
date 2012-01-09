@@ -1,17 +1,20 @@
 package woodle.backend.model;
 
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@XmlRootElement(name = "appointments")
+
 public class AppointmentListing {
     private List<Appointment> appointments;
 
     public AppointmentListing() {
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
     }
 
     public AppointmentListing(Set<Appointment> appointments) {

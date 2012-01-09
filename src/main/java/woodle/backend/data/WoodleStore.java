@@ -42,4 +42,8 @@ public class WoodleStore {
     public void saveMember(Member member) {
         memberMap.put(member.getEmail(),member);
     }
+
+    public void resetMembers() {
+        memberMap.clear();
+    }
 }

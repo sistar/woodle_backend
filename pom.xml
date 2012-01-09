@@ -3,8 +3,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>woodle.backend</groupId>
-    <artifactId>woodle.backend</artifactId>
+    <groupId>woodle</groupId>
+    <artifactId>woodle_backend</artifactId>
     <version>1.0</version>
     <packaging>war</packaging>
     <name>Java EE 6 webapp project</name>

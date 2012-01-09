@@ -21,7 +21,6 @@ import java.util.*;
 
 @Path("/appointments")
 @RequestScoped
-@NoJackson
 public class AppointmentsResource {
 
     @Inject
