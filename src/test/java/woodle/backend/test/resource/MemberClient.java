@@ -12,7 +12,7 @@ public interface MemberClient {
     @PUT
     @Path("/{email}")
     @Consumes(APPLICATION_JSON)
-    public void modifyMember(Member member);
+    public void modifyMember(Member member,@PathParam("email") String email);
 
     @POST
     @Consumes(APPLICATION_JSON)

@@ -6,10 +6,7 @@ import woodle.backend.model.AppointmentListing;
 import woodle.backend.model.Member;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @ApplicationScoped
 public class WoodleStore {
@@ -45,5 +42,13 @@ public class WoodleStore {
 
     public void resetMembers() {
         memberMap.clear();
+    }
+
+    public Collection<Member> getMembers() {
+        return memberMap.values();
+    }
+
+    public Member getMember(String email) {
+        return memberMap.get(email);
     }
 }

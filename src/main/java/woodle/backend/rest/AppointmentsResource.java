@@ -1,12 +1,9 @@
 package woodle.backend.rest;
 
-import org.jboss.resteasy.annotations.providers.NoJackson;
 import org.jboss.resteasy.annotations.providers.jaxb.Wrapped;
-
 import woodle.backend.data.UnkownMemberException;
 import woodle.backend.data.WoodleStore;
 import woodle.backend.model.Appointment;
-import woodle.backend.model.AppointmentKey;
 import woodle.backend.model.AppointmentListing;
 import woodle.backend.model.AppointmentWrapper;
 
@@ -14,10 +11,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Path("/appointments")
 @RequestScoped
@@ -29,7 +24,6 @@ public class AppointmentsResource {
     @PUT
     @Consumes(value = "application/json")
     public void create(AppointmentWrapper appointmentWrapper) {
-        AppointmentKey k = new AppointmentKey(appointmentWrapper.getAppointment().getTitle(), appointmentWrapper.getAppointment().getStart(), appointmentWrapper.getAppointment().getMemberEmail());
         try {
             woodleStore.saveAppointment(appointmentWrapper.getAppointment());
         } catch (UnkownMemberException e) {

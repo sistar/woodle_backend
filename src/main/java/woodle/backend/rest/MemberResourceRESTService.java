@@ -1,18 +1,14 @@
 package woodle.backend.rest;
 
-import java.util.List;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-
-import org.jboss.resteasy.annotations.providers.NoJackson;
 import woodle.backend.data.WoodleStore;
 import woodle.backend.model.AppointmentListing;
 import woodle.backend.model.Member;
-import woodle.backend.model.MemberWrapper;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import java.util.Collection;
 
 @Path("/members")
 @RequestScoped
@@ -25,17 +21,20 @@ public class MemberResourceRESTService {
     @PUT
     @Path("/{email}")
     @Consumes(APPLICATION_JSON)
-    public void modifyMember(Member member) {
-
+    public void modifyMember(Member member, @PathParam("email") String email) {
+        Member oldMember = woodleStore.getMember(email);
+        woodleStore.saveMember(member);
     }
 
     @POST
     @Consumes(APPLICATION_JSON)
     public void addMember(Member member) {
-        //Member member = memberWrapper.getMember();
 
+        if(member.getEmail() == null){
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
         if (woodleStore.hasMember(member.getEmail())) {
-            throw new WebApplicationException(Response.Status.BAD_REQUEST); //TODO read Rest in Practice Chapter 4. CRUD Web Services
+            throw new WebApplicationException(Response.Status.CONFLICT); //TODO read Rest in Practice Chapter 4. CRUD Web Services
         }
         woodleStore.saveMember(member);
     }
@@ -43,24 +42,23 @@ public class MemberResourceRESTService {
 
     @GET
     @Produces(APPLICATION_JSON)
-    public List<Member> listAllMembers() {
-        // Use @SupressWarnings to force IDE to ignore warnings about "genericizing" the results of
-        // this query
+    public Collection<Member> listAllMembers() {
         //@SuppressWarnings("unchecked")
         // We recommend centralizing inline queries such as this one into @NamedQuery annotations on
         // the @Entity class
         // as described in the named query blueprint:
         // https://blueprints.dev.java.net/bpcatalog/ee5/persistence/namedquery.html
         //final List<Member> results = em.createQuery("select m from Member m order by m.name").getResultList();
-        return null;
+        final Collection<Member> results = woodleStore.getMembers();
+        return results;
     }
 
     @GET
-    @Path("/{id:[0-9][0-9]*}")
+    @Path("/{email}")
     @Produces(APPLICATION_JSON)
-    public Member lookupMemberById(@PathParam("id") long id) {
+    public Member lookupMemberByEmail(@PathParam("email") String email) {
         //return em.find(Member.class, id);
-        return null;
+        return woodleStore.getMember(email);
     }
 
     @GET

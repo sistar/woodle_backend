@@ -72,11 +72,11 @@ public class AppointmentClientTest {
 
    static {
 
-        DatatypeFactory dtf = null;
+        DatatypeFactory dtf;
         try {
             dtf = DatatypeFactory.newInstance();
         } catch (DatatypeConfigurationException e) {
-
+           throw new RuntimeException(e);
         }
         APPOINTMENT_DATE = dtf.newXMLGregorianCalendar("2012-02-01T13:10:00.000+01:00");
     }

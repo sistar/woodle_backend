@@ -4,7 +4,8 @@ package woodle.backend.rest;
 import woodle.backend.data.WoodleStore;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 
 @Path("/management")
 public class ManagementResource {
