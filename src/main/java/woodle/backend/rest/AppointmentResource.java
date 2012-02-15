@@ -1,19 +1,18 @@
-package woodle.backend.test.resource;
+package woodle.backend.rest;
 
 import woodle.backend.model.Appointment;
 import woodle.backend.model.AppointmentListing;
-import woodle.backend.model.AppointmentWrapper;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 @Path("/appointments")
-public interface AppointmentClient {
+public interface AppointmentResource {
 
     @PUT
     @Produces(value = "application/json")
     @Consumes(value = "application/json")
-    public Response.Status create( AppointmentWrapper appointmentWrapper);
+    public Response.Status create(Appointment appointment);
 
     @GET
     @Produces(value = "application/json")

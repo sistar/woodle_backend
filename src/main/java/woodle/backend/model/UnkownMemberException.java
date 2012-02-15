@@ -1,4 +1,4 @@
-package woodle.backend.data;
+package woodle.backend.model;
 
 public class UnkownMemberException extends Exception {
     private String memberEmail;

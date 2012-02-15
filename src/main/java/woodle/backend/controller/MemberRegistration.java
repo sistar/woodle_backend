@@ -1,6 +1,6 @@
 package woodle.backend.controller;
 
-import java.util.logging.Logger;
+import woodle.backend.model.Member;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateful;
@@ -10,8 +10,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
-
-import woodle.backend.model.Member;
+import java.util.logging.Logger;
 
 // The @Stateful annotation eliminates the need for manual transaction demarcation
 @Stateful
@@ -22,32 +21,33 @@ import woodle.backend.model.Member;
 @Model
 public class MemberRegistration {
 
-   @Inject
-   private Logger log;
 
-   @Inject
-   private EntityManager em;
+    @Inject
+    private Logger log;
 
-   @Inject
-   private Event<Member> memberEventSrc;
+    @Inject
+    private EntityManager em;
 
-   private Member newMember;
+    @Inject
+    private Event<Member> memberEventSrc;
 
-   @Produces
-   @Named
-   public Member getNewMember() {
-      return newMember;
-   }
+    private Member newMember;
 
-   public void register() throws Exception {
-      log.info("Registering " + newMember.getName());
-      em.persist(newMember);
-      memberEventSrc.fire(newMember);
-      initNewMember();
-   }
+    @Produces
+    @Named
+    public Member getNewMember() {
+        return newMember;
+    }
 
-   @PostConstruct
-   public void initNewMember() {
-      newMember = new Member();
-   }
+    public void register() throws Exception {
+        log.info("Registering member with E-Mail " + newMember.getEmail());
+        em.persist(newMember);
+        memberEventSrc.fire(newMember);
+        initNewMember();
+    }
+
+    @PostConstruct
+    public void initNewMember() {
+        newMember = new Member();
+    }
 }

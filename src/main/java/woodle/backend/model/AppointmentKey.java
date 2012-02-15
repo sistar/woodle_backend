@@ -30,8 +30,8 @@ public class AppointmentKey {
 
     public AppointmentKey(Appointment appointment) {
         this.title = appointment.getTitle();
-        this.start = appointment.getStart();
-        this.memberEmail = appointment.getMemberEmail();
+        this.start = appointment.getStartDate();
+        this.memberEmail = appointment.getUser();
 
     }
 
