@@ -23,6 +23,7 @@ import javax.ws.rs.ApplicationPath;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 
@@ -37,10 +38,10 @@ public class RestClientTest {
      * module providing basic authentication
      */
     public static final Archive<WebArchive> AUTHENTICATION = ShrinkWrap.create(WebArchive.class)
-            .addAsResource("roles.properties")
-            .addAsResource("users.properties")
-            .addAsWebInfResource("WEB-INF/web.xml")
-            .addAsWebInfResource("WEB-INF/jboss-web.xml");
+            .addAsResource(new File("src/main/webapp/roles.properties"))
+            .addAsResource(new File("src/main/webapp/users.properties"))
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/jboss-web.xml"));
     protected static final String RESOURCE_PREFIX = JaxRsActivator.class.getAnnotation(ApplicationPath.class).value().substring(1);
     @ArquillianResource
     URL deploymentUrl;

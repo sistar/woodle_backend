@@ -9,7 +9,6 @@ import javax.enterprise.inject.Model;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.EntityManager;
 import java.util.logging.Logger;
 
 // The @Stateful annotation eliminates the need for manual transaction demarcation
@@ -25,8 +24,8 @@ public class MemberRegistration {
     @Inject
     private Logger log;
 
-    @Inject
-    private EntityManager em;
+    //@Inject
+    //private EntityManager em;
 
     @Inject
     private Event<Member> memberEventSrc;
@@ -41,7 +40,7 @@ public class MemberRegistration {
 
     public void register() throws Exception {
         log.info("Registering member with E-Mail " + newMember.getEmail());
-        em.persist(newMember);
+        //em.persist(newMember);
         memberEventSrc.fire(newMember);
         initNewMember();
     }

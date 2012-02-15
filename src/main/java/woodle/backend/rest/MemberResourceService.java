@@ -18,6 +18,7 @@ import java.util.List;
 @RequestScoped
 public class MemberResourceService implements MemberResource {
     public static final String APPLICATION_JSON = "application/json";
+
     @Inject
     private WoodleStore woodleStore;
 
@@ -25,7 +26,6 @@ public class MemberResourceService implements MemberResource {
     @Override
     public void modifyMember(Member member, @PathParam("email") String email) {
         Member oldMember = woodleStore.getMember(email);
-
         woodleStore.saveMember(member);
     }
 

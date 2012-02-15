@@ -31,7 +31,6 @@ public class MemberClientOnlyTest extends RestClientTest {
                 .addClasses(MemberRegistration.class, WoodleStore.class
                 )
 
-                .addAsResource("META-INF/persistence.xml", "META-INF/persistence.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml").addClass(Resources.class)
                 .merge(AUTHENTICATION);
 
