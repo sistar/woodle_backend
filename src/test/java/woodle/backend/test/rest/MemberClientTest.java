@@ -81,4 +81,21 @@ public class MemberClientTest extends RestClientTest {
         assertThat(appointments.size(), is(equalTo(1)));
         assertThat(appointments.get(0).getUser(), is(equalTo(SANTA_CLAUS_NO)));
     }
+
+    @Test
+    public void testShowAllAppointmentsWhichIBelongTo() throws Exception {
+        client(ManagementResource.class, SANTA_CLAUS_NO, "secret").reset();
+        createAppointment(SANTA_CLAUS_NO, "secret");
+        createAppointment(MAREN_SOETEBIER_GOOGLEMAIL_COM, "secret");
+        List<Appointment> appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret").lookupAppointmentsAttendance(SANTA_CLAUS_NO);
+        assertThat(appointments.size(), is(equalTo(2)));
+        appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret").lookupAppointmentsAttendanceWaiting(SANTA_CLAUS_NO);
+        assertThat(appointments.size(), is(equalTo(0)));
+        appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret").lookupAppointmentsAttendanceConfirmed(SANTA_CLAUS_NO);
+        assertThat(appointments.size(), is(equalTo(2)));
+        appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret").lookupAppointmentsAttendanceConfirmed("rupert@north.pole");
+        assertThat(appointments.size(), is(equalTo(0)));
+        appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret").lookupAppointmentsAttendanceWaiting("rupert@north.pole");
+        assertThat(appointments.size(), is(equalTo(2)));
+    }
 }

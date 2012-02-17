@@ -14,5 +14,6 @@ public class ManagementResourceService implements ManagementResource {
     public void reset() {
 
         woodleStore.resetMembers();
+        woodleStore.resetAppointments();
     }
 }

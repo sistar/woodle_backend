@@ -3,7 +3,8 @@ package woodle.backend.model;
 public class AppointmentKey {
     private String title;
     private String start;
-    private String memberEmail;
+    private String creatorEmail;
+
 
     public String getTitle() {
         return title;
@@ -13,22 +14,22 @@ public class AppointmentKey {
         return start;
     }
 
-    public String getMemberEmail() {
-        return memberEmail;
+    public String getCreatorEmail() {
+        return creatorEmail;
     }
 
-    public AppointmentKey(String title, String start, String memberEmail
+    public AppointmentKey(String title, String start, String creatorEmail
     ) {
         this.title = title;
         this.start = start;
-        this.memberEmail = memberEmail;
+        this.creatorEmail = creatorEmail;
 
     }
 
     public AppointmentKey(Appointment appointment) {
         this.title = appointment.getTitle();
         this.start = appointment.getStartDate();
-        this.memberEmail = appointment.getUser();
+        this.creatorEmail = appointment.getUser();
 
     }
 
@@ -40,7 +41,7 @@ public class AppointmentKey {
 
         AppointmentKey that = (AppointmentKey) o;
 
-        if (memberEmail != null ? !memberEmail.equals(that.memberEmail) : that.memberEmail != null) return false;
+        if (creatorEmail != null ? !creatorEmail.equals(that.creatorEmail) : that.creatorEmail != null) return false;
         if (start != null ? !start.equals(that.start) : that.start != null) return false;
         if (title != null ? !title.equals(that.title) : that.title != null) return false;
 
@@ -51,7 +52,7 @@ public class AppointmentKey {
     public int hashCode() {
         int result = title != null ? title.hashCode() : 0;
         result = 31 * result + (start != null ? start.hashCode() : 0);
-        result = 31 * result + (memberEmail != null ? memberEmail.hashCode() : 0);
+        result = 31 * result + (creatorEmail != null ? creatorEmail.hashCode() : 0);
         return result;
     }
 
@@ -61,7 +62,7 @@ public class AppointmentKey {
         return "AppointmentKey{" +
                 "title='" + title + '\'' +
                 ", start=" + start +
-                ", memberEmail='" + memberEmail + '\'' +
+                ", creatorEmail='" + creatorEmail + '\'' +
                 '}';
     }
 }

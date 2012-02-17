@@ -12,16 +12,17 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import woodle.backend.model.Appointment;
+import woodle.backend.model.ComparableAttendance;
 import woodle.backend.model.Member;
 import woodle.backend.rest.AppointmentResource;
 import woodle.backend.rest.JaxRsActivator;
-import woodle.backend.rest.ManagementResource;
 import woodle.backend.rest.RegisterResource;
 
 import javax.ws.rs.ApplicationPath;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.TreeSet;
 
 public class RestClientTest {
     public static final String SANTA_CLAUS_NO = "santa@claus.no";
@@ -84,9 +85,9 @@ public class RestClientTest {
                 "icy JSON stuff",
                 APPOINTMENT_DATE,
                 APPOINTMENT_DATE,
-                Arrays.asList(SANTA_CLAUS_NO),
-                Arrays.asList("rupert@north.pole"),
-                userEmail, 1);
+                new TreeSet<ComparableAttendance>(Arrays.asList(new ComparableAttendance(SANTA_CLAUS_NO, "CAL1234"))),
+                new TreeSet<ComparableAttendance>(Arrays.asList(new ComparableAttendance("rupert@north.pole", "CAL666"))),
+                userEmail, 2);
         //store appointment to woodle backend
         appointmentClient.create(appointment);
 
@@ -94,7 +95,6 @@ public class RestClientTest {
     }
 
     protected void createAppointment(String userEmail, String password) {
-        client(ManagementResource.class, userEmail, password).reset();
         createMember(client(RegisterResource.class, userEmail, password), userEmail, password);
         createAppointment(client(AppointmentResource.class, userEmail, password), userEmail);
     }

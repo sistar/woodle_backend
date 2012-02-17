@@ -58,5 +58,20 @@ public class MemberResourceService implements MemberResource {
         return woodleStore.appointmentsForUser(eMail);
     }
 
+    @Override
+    public List<Appointment> lookupAppointmentsAttendance(@PathParam("email") String eMail) {
+        return woodleStore.appointmentsAttendance(eMail);
+    }
+
+    @Override
+    public List<Appointment> lookupAppointmentsAttendanceWaiting(@PathParam("email") String eMail) {
+        return woodleStore.appointmentsAttendanceWaiting(eMail);
+    }
+
+    @Override
+    public List<Appointment> lookupAppointmentsAttendanceConfirmed(@PathParam("email") String eMail) {
+        return woodleStore.appointmentsAttendanceConfirmed(eMail);
+    }
+
 
 }
