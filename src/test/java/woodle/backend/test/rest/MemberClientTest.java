@@ -66,10 +66,19 @@ public class MemberClientTest extends RestClientTest {
     public void testPutAppointmentUsingClientProxy() throws Exception {
         client(ManagementResource.class, SANTA_CLAUS_NO, "secret").reset();
         testCreateANewMember();
-        createAppointment(client(AppointmentResource.class, SANTA_CLAUS_NO, "secret"));
+        createAppointment(client(AppointmentResource.class, SANTA_CLAUS_NO, "secret"), SANTA_CLAUS_NO);
         List<Appointment> appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret").lookupAppointmentsForMemberEMail(SANTA_CLAUS_NO);
         Appointment next = appointments.iterator().next();
         assertThat(next.getStartDate(), is(equalTo(APPOINTMENT_DATE)));
     }
 
+    @Test
+    public void testShowAllAppointmentsWhichIHaveCreated() throws Exception {
+        client(ManagementResource.class, SANTA_CLAUS_NO, "secret").reset();
+        createAppointment(SANTA_CLAUS_NO, "secret");
+        createAppointment(MAREN_SOETEBIER_GOOGLEMAIL_COM, "secret");
+        List<Appointment> appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret").lookupAppointmentsForMemberEMail(SANTA_CLAUS_NO);
+        assertThat(appointments.size(), is(equalTo(1)));
+        assertThat(appointments.get(0).getUser(), is(equalTo(SANTA_CLAUS_NO)));
+    }
 }

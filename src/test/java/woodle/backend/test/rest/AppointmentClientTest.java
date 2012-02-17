@@ -12,9 +12,7 @@ import org.junit.runner.RunWith;
 import woodle.backend.data.WoodleStore;
 import woodle.backend.model.Appointment;
 import woodle.backend.rest.AppointmentResource;
-import woodle.backend.rest.ManagementResource;
 import woodle.backend.rest.MemberResource;
-import woodle.backend.rest.RegisterResource;
 import woodle.backend.util.Resources;
 
 import java.util.List;
@@ -28,8 +26,6 @@ import static org.junit.Assert.assertThat;
 @RunAsClient
 public class AppointmentClientTest extends RestClientTest {
 
-
-    public static final String MAREN_SOETEBIER_GOOGLEMAIL_COM = "maren.soetebier@googlemail.com";
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
@@ -63,11 +59,9 @@ public class AppointmentClientTest extends RestClientTest {
         createAppointment(MAREN_SOETEBIER_GOOGLEMAIL_COM, "secret");
         List<Appointment> appointments = client(AppointmentResource.class, SANTA_CLAUS_NO, "secret").clientGetAppointments();
         assertThat(appointments.size(), is(equalTo(2)));
+        assertThat(appointments.get(0).getUser(), is(SANTA_CLAUS_NO));
+        assertThat(appointments.get(1).getUser(), is(MAREN_SOETEBIER_GOOGLEMAIL_COM));
+
     }
 
-    private void createAppointment(String userEmail, String password) {
-        client(ManagementResource.class, userEmail, password).reset();
-        createMember(client(RegisterResource.class, userEmail, password), userEmail, password);
-        createAppointment(client(AppointmentResource.class, userEmail, password));
-    }
 }

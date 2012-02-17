@@ -15,6 +15,7 @@ import woodle.backend.model.Appointment;
 import woodle.backend.model.Member;
 import woodle.backend.rest.AppointmentResource;
 import woodle.backend.rest.JaxRsActivator;
+import woodle.backend.rest.ManagementResource;
 import woodle.backend.rest.RegisterResource;
 
 import javax.ws.rs.ApplicationPath;
@@ -40,6 +41,7 @@ public class RestClientTest {
             .addAsWebInfResource(new File(SRC_MAIN_WEBAPP_WEB_INF + "/web.xml"))
             .addAsWebInfResource(new File(SRC_MAIN_WEBAPP_WEB_INF + "/jboss-web.xml"));
     protected static final String RESOURCE_PREFIX = JaxRsActivator.class.getAnnotation(ApplicationPath.class).value().substring(1);
+    public static final String MAREN_SOETEBIER_GOOGLEMAIL_COM = "maren.soetebier@googlemail.com";
 
 
     @ArquillianResource
@@ -74,7 +76,7 @@ public class RestClientTest {
         return member;
     }
 
-    public Appointment createAppointment(AppointmentResource appointmentClient) {
+    public Appointment createAppointment(AppointmentResource appointmentClient, String userEmail) {
         Appointment appointment = new Appointment(
                 APPOINTMENT_ID,
                 JSON_HACKING,
@@ -84,10 +86,16 @@ public class RestClientTest {
                 APPOINTMENT_DATE,
                 Arrays.asList(SANTA_CLAUS_NO),
                 Arrays.asList("rupert@north.pole"),
-                SANTA_CLAUS_NO, 1);
+                userEmail, 1);
         //store appointment to woodle backend
         appointmentClient.create(appointment);
 
         return appointment;
+    }
+
+    protected void createAppointment(String userEmail, String password) {
+        client(ManagementResource.class, userEmail, password).reset();
+        createMember(client(RegisterResource.class, userEmail, password), userEmail, password);
+        createAppointment(client(AppointmentResource.class, userEmail, password), userEmail);
     }
 }
