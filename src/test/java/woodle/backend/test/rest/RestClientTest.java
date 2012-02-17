@@ -91,7 +91,7 @@ public class RestClientTest {
         member.setEmail(email);
         member.setPassword(password);
         //store member to woodle backend
-        memberClient.addMember(member);
+        memberClient.createMember(member);
 
         return member;
     }

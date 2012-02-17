@@ -6,7 +6,6 @@ import woodle.backend.model.Member;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -14,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Path("/members")
+
 @RequestScoped
 public class MemberResourceService implements MemberResource {
     public static final String APPLICATION_JSON = "application/json";
@@ -30,7 +29,7 @@ public class MemberResourceService implements MemberResource {
     }
 
     @Override
-    public void addMember(Member member) {
+    public void createMember(Member member) {
 
         if (member.getEmail() == null) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
@@ -40,12 +39,6 @@ public class MemberResourceService implements MemberResource {
         }
         woodleStore.saveMember(member);
     }
-
-    @Override
-    public void login(String email, String password) {
-        //TODO BASIC AUTH should allready be in place
-    }
-
 
     @Override
     public List<Member> listAllMembers() {

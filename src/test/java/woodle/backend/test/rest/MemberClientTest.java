@@ -22,7 +22,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
-public class MemberClientOnlyTest extends RestClientTest {
+public class MemberClientTest extends RestClientTest {
 
     public static final String NOT_SO_SECRET = "notSoSecret";
 
