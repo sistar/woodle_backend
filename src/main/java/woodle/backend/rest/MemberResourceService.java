@@ -7,8 +7,6 @@ import woodle.backend.model.Member;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,18 +23,6 @@ public class MemberResourceService implements MemberResource {
     @Override
     public void modifyMember(Member member, @PathParam("email") String email) {
         Member oldMember = woodleStore.getMember(email);
-        woodleStore.saveMember(member);
-    }
-
-    @Override
-    public void createMember(Member member) {
-
-        if (member.getEmail() == null) {
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);
-        }
-        if (woodleStore.hasMember(member.getEmail())) {
-            throw new WebApplicationException(Response.Status.CONFLICT); //TODO read Rest in Practice Chapter 4. CRUD Web Services
-        }
         woodleStore.saveMember(member);
     }
 

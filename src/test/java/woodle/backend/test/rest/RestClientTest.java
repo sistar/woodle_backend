@@ -14,10 +14,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Before;
 import woodle.backend.model.Appointment;
 import woodle.backend.model.Member;
-import woodle.backend.rest.AppointmentResource;
-import woodle.backend.rest.JaxRsActivator;
-import woodle.backend.rest.ManagementResource;
-import woodle.backend.rest.MemberResource;
+import woodle.backend.rest.*;
 
 import javax.ws.rs.ApplicationPath;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -36,15 +33,17 @@ public class RestClientTest {
     AppointmentResource appointmentClient;
     MemberResource memberClient;
     ManagementResource managementResource;
+    RegisterResource registerClient;
 
+    public static final String SRC_MAIN_WEBAPP_WEB_INF = "src/main/webapp/WEB-INF";
     /**
      * module providing basic authentication
      */
     public static final Archive<WebArchive> AUTHENTICATION = ShrinkWrap.create(WebArchive.class)
-            .addAsResource(new File("src/main/webapp/roles.properties"))
-            .addAsResource(new File("src/main/webapp/users.properties"))
-            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
-            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/jboss-web.xml"));
+            .addAsResource(new File(SRC_MAIN_WEBAPP_WEB_INF + "/roles.properties"))
+            .addAsResource(new File(SRC_MAIN_WEBAPP_WEB_INF + "/users.properties"))
+            .addAsWebInfResource(new File(SRC_MAIN_WEBAPP_WEB_INF + "/web.xml"))
+            .addAsWebInfResource(new File(SRC_MAIN_WEBAPP_WEB_INF + "/jboss-web.xml"));
     protected static final String RESOURCE_PREFIX = JaxRsActivator.class.getAnnotation(ApplicationPath.class).value().substring(1);
 
 
@@ -64,6 +63,7 @@ public class RestClientTest {
         appointmentClient = client(AppointmentResource.class);
         memberClient = client(MemberResource.class);
         managementResource = client(ManagementResource.class);
+        registerClient = client(RegisterResource.class);
     }
 
     /**
@@ -86,12 +86,12 @@ public class RestClientTest {
                 path, clientExecutor);
     }
 
-    public Member createMember(MemberResource memberClient, String email, String password) {
+    public Member createMember(RegisterResource registerClient, String email, String password) {
         Member member = new Member();
         member.setEmail(email);
         member.setPassword(password);
         //store member to woodle backend
-        memberClient.createMember(member);
+        registerClient.createMember(member);
 
         return member;
     }

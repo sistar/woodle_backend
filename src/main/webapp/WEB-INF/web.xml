@@ -4,18 +4,20 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>All resources</web-resource-name>
-            <url-pattern>/*</url-pattern>
+            <web-resource-name>All resources except register</web-resource-name>
+            <url-pattern>/rest/members/*</url-pattern>
+            <url-pattern>/rest/appointments/*</url-pattern>
+            <url-pattern>/rest/management/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>role</role-name>
+            <role-name>known</role-name>
         </auth-constraint>
     </security-constraint>
     <login-config>
         <auth-method>BASIC</auth-method>
-        <realm-name>woodle realm</realm-name>
+        <realm-name>woodle</realm-name>
     </login-config>
     <security-role>
-        <role-name>role</role-name>
+        <role-name>known</role-name>
     </security-role>
 </web-app>

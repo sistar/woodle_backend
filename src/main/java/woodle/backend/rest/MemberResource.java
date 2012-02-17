@@ -16,10 +16,6 @@ public interface MemberResource {
     @Consumes(APPLICATION_JSON)
     public void modifyMember(Member member, @PathParam("email") String email);
 
-    @POST
-    @Consumes(APPLICATION_JSON)
-    public void createMember(Member member);
-
     @GET
     @Produces(APPLICATION_JSON)
     public List<Member> listAllMembers();

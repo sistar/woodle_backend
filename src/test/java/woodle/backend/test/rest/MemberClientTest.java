@@ -42,12 +42,13 @@ public class MemberClientTest extends RestClientTest {
     public void testCreateANewMember() {
         managementResource.reset();
         assertThat(memberClient.listAllMembers().size(), is(equalTo(0)));
-        createMember(memberClient, SANTA_CLAUS_NO, "secret");
+        createMember(registerClient, SANTA_CLAUS_NO, "secret");
         assertThat(memberClient.listAllMembers().size(), is(equalTo(1)));
     }
 
     @Test
     public void modifyAMember() {
+        managementResource.reset();
         testCreateANewMember();
         memberClient.modifyMember(new Member(NOT_SO_SECRET, SANTA_CLAUS_NO, "81955840"), SANTA_CLAUS_NO);
         assertThat(memberClient.listAllMembers().size(), is(equalTo(1)));
@@ -57,6 +58,8 @@ public class MemberClientTest extends RestClientTest {
 
     @Test
     public void testPutAppointmentUsingClientProxy() throws Exception {
+        managementResource.reset();
+        testCreateANewMember();
         createAppointment(appointmentClient);
         List<Appointment> appointments = memberClient.lookupAppointmentsForMemberEMail(SANTA_CLAUS_NO);
         Appointment next = appointments.iterator().next();

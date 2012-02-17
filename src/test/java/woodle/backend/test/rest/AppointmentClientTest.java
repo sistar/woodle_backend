@@ -39,7 +39,7 @@ public class AppointmentClientTest extends RestClientTest {
     @Test
     public void testCreateAppointment() throws Exception {
         managementResource.reset();
-        createMember(memberClient, SANTA_CLAUS_NO, "secret");
+        createMember(registerClient, SANTA_CLAUS_NO, "secret");
         createAppointment(appointmentClient);
         List<Appointment> appointments = memberClient.lookupAppointmentsForMemberEMail(SANTA_CLAUS_NO);
         assertThat(appointments.iterator().next().getStartDate(), is(equalTo(APPOINTMENT_DATE)));
