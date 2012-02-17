@@ -10,12 +10,15 @@ import javax.ws.rs.core.Response;
 public interface AppointmentResource {
 
     @PUT
-    @Produces(value = "application/json")
     @Consumes(value = "application/json")
     public Response.Status create(Appointment appointment);
 
     @GET
     @Produces(value = "application/json")
-    @Consumes(value = "application/json")
     public AppointmentListing clientGetAppointments();
+
+    @GET
+    @Produces(value = "application/json")
+    @Path("/{appointmentId}")
+    Appointment lookupById(@PathParam("appointmentId") String appointmentId);
 }

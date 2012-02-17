@@ -36,6 +36,15 @@ public class Member implements Serializable {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    public Member() {
+    }
+
+    public Member(String password, String email, String phoneNumber) {
+        this.password = password;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
+
     public Long getId() {
         return id;
     }

@@ -1,16 +1,14 @@
 package woodle.backend.model;
 
-import javax.xml.datatype.XMLGregorianCalendar;
-
 public class AppointmentKey {
     private String title;
-    private XMLGregorianCalendar start;
+    private String start;
 
     public String getTitle() {
         return title;
     }
 
-    public XMLGregorianCalendar getStart() {
+    public String getStart() {
         return start;
     }
 
@@ -20,7 +18,7 @@ public class AppointmentKey {
 
     private String memberEmail;
 
-    public AppointmentKey(String title, XMLGregorianCalendar start, String memberEmail
+    public AppointmentKey(String title, String start, String memberEmail
     ) {
         this.title = title;
         this.start = start;
@@ -56,5 +54,15 @@ public class AppointmentKey {
         result = 31 * result + (start != null ? start.hashCode() : 0);
         result = 31 * result + (memberEmail != null ? memberEmail.hashCode() : 0);
         return result;
+    }
+
+
+    @Override
+    public String toString() {
+        return "AppointmentKey{" +
+                "title='" + title + '\'' +
+                ", start=" + start +
+                ", memberEmail='" + memberEmail + '\'' +
+                '}';
     }
 }

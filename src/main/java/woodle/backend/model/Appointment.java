@@ -1,7 +1,6 @@
 package woodle.backend.model;
 
 
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.List;
 
 public class Appointment {
@@ -9,8 +8,8 @@ public class Appointment {
     private String title;
     private String location;
     private String description;
-    private XMLGregorianCalendar startDate;
-    private XMLGregorianCalendar endDate;
+    private String startDate;
+    private String endDate;
     private List<String> attendance;
     private List<String> maybeAttendance;
     private String user;
@@ -20,7 +19,7 @@ public class Appointment {
     }
 
     public Appointment(String id, String title, String location, String description,
-                       XMLGregorianCalendar startDate, XMLGregorianCalendar endDate,
+                       String startDate, String endDate,
                        List<String> attendance, List<String> maybeAttendance, String user, int maxNumber) {
         this.id = id;
         this.title = title;
@@ -32,6 +31,13 @@ public class Appointment {
         this.maybeAttendance = maybeAttendance;
         this.user = user;
         this.maxNumber = maxNumber;
+    }
+
+    public static String DATE_MATCH = "-(?=\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}.*)";
+
+    public static AppointmentKey createAppointmentKey(String memberEmail, String appointmentId) {
+        String[] splitResult = appointmentId.split(DATE_MATCH);
+        return new AppointmentKey(splitResult[0], splitResult[1], memberEmail);
     }
 
     public String getUser() {
@@ -51,11 +57,11 @@ public class Appointment {
     }
 
 
-    public XMLGregorianCalendar getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(XMLGregorianCalendar startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
@@ -84,11 +90,11 @@ public class Appointment {
         this.description = description;
     }
 
-    public XMLGregorianCalendar getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(XMLGregorianCalendar endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 

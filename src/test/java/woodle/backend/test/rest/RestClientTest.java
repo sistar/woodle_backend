@@ -1,4 +1,4 @@
-package woodle.backend.test;
+package woodle.backend.test.rest;
 
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
@@ -22,17 +22,20 @@ import woodle.backend.rest.MemberResource;
 import javax.ws.rs.ApplicationPath;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertNotNull;
-
 public class RestClientTest {
     public static final String SANTA_CLAUS_NO = "santa@claus.no";
-    public XMLGregorianCalendar APPOINTMENT_DATE;
+    public static final String JSON_HACKING = "json Hacking";
+    public static final String APPOINTMENT_DATE = "2012-02-01T13:10:00.000+01:00";
+    public static final String APPOINTMENT_ID = JSON_HACKING + "-" + APPOINTMENT_DATE;
 
+
+    AppointmentResource appointmentClient;
+    MemberResource memberClient;
+    ManagementResource managementResource;
 
     /**
      * module providing basic authentication
@@ -43,13 +46,10 @@ public class RestClientTest {
             .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
             .addAsWebInfResource(new File("src/main/webapp/WEB-INF/jboss-web.xml"));
     protected static final String RESOURCE_PREFIX = JaxRsActivator.class.getAnnotation(ApplicationPath.class).value().substring(1);
+
+
     @ArquillianResource
     URL deploymentUrl;
-
-
-    AppointmentResource appointmentClient;
-    MemberResource memberClient;
-    ManagementResource managementResource;
 
     @Before
     public void init() {
@@ -59,7 +59,7 @@ public class RestClientTest {
         } catch (DatatypeConfigurationException e) {
             throw new RuntimeException(e);
         }
-        APPOINTMENT_DATE = dtf.newXMLGregorianCalendar("2012-02-01T13:10:00.000+01:00");
+        //APPOINTMENT_DATE = dtf.newXMLGregorianCalendar("2012-02-01T13:10:00.000+01:00");
 
         appointmentClient = client(AppointmentResource.class);
         memberClient = client(MemberResource.class);
@@ -86,20 +86,30 @@ public class RestClientTest {
                 path, clientExecutor);
     }
 
-    public Member createMember(MemberResource memberClient) {
+    public Member createMember(MemberResource memberClient, String email, String password) {
         Member member = new Member();
-        member.setEmail(SANTA_CLAUS_NO);
-        member.setPassword("topSecret");
-        assertNotNull(memberClient);
+        member.setEmail(email);
+        member.setPassword(password);
+        //store member to woodle backend
         memberClient.addMember(member);
+
         return member;
     }
 
     public Appointment createAppointment(AppointmentResource appointmentClient) {
-        Appointment appointment = new Appointment("json Hacking-2012-21-03-16.20.00", "json Hacking", "North Pole", "icy JSON stuff",
-                APPOINTMENT_DATE, APPOINTMENT_DATE, Arrays.asList(SANTA_CLAUS_NO), Arrays.asList("rupert@north.pole"), SANTA_CLAUS_NO, 1);
+        Appointment appointment = new Appointment(
+                APPOINTMENT_ID,
+                JSON_HACKING,
+                "North Pole",
+                "icy JSON stuff",
+                APPOINTMENT_DATE,
+                APPOINTMENT_DATE,
+                Arrays.asList(SANTA_CLAUS_NO),
+                Arrays.asList("rupert@north.pole"),
+                SANTA_CLAUS_NO, 1);
+        //store appointment to woodle backend
         appointmentClient.create(appointment);
-        return appointment;
 
+        return appointment;
     }
 }

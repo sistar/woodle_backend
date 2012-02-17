@@ -1,4 +1,4 @@
-package woodle.backend.test;
+package woodle.backend.test.persistence;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
