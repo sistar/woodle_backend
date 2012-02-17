@@ -7,21 +7,32 @@ import woodle.backend.model.Member;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 
 @RequestScoped
 public class MemberResourceService implements MemberResource {
+
     public static final String APPLICATION_JSON = "application/json";
+
+    @Context
+    SecurityContext context;
 
     @Inject
     private WoodleStore woodleStore;
 
+    @Inject
+    Logger logger;
 
     @Override
     public void modifyMember(Member member, @PathParam("email") String email) {
+        String userEmail = context.getUserPrincipal().getName();
+        logger.info("PRINCIPAL EMAIL:" + email);
         Member oldMember = woodleStore.getMember(email);
         woodleStore.saveMember(member);
     }

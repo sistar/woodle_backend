@@ -31,9 +31,9 @@ public class ManagementResetTest extends RestClientTest {
     }
 
     @Test
-    public void testPutAppointmentUsingClientProxy() throws Exception {
+    public void testReset() throws Exception {
 
-        client(ManagementResource.class).reset();
+        client(ManagementResource.class, SANTA_CLAUS_NO, "secret").reset();
 
     }
 }

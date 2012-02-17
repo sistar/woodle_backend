@@ -3,6 +3,7 @@ package woodle.backend.model;
 public class AppointmentKey {
     private String title;
     private String start;
+    private String memberEmail;
 
     public String getTitle() {
         return title;
@@ -15,8 +16,6 @@ public class AppointmentKey {
     public String getMemberEmail() {
         return memberEmail;
     }
-
-    private String memberEmail;
 
     public AppointmentKey(String title, String start, String memberEmail
     ) {

@@ -1,10 +1,10 @@
 package woodle.backend.rest;
 
 import woodle.backend.model.Appointment;
-import woodle.backend.model.AppointmentListing;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Path("/appointments")
 public interface AppointmentResource {
@@ -15,7 +15,7 @@ public interface AppointmentResource {
 
     @GET
     @Produces(value = "application/json")
-    public AppointmentListing clientGetAppointments();
+    public List<Appointment> clientGetAppointments();
 
     @GET
     @Produces(value = "application/json")

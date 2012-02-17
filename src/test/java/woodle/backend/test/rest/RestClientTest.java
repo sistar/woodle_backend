@@ -11,14 +11,13 @@ import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Before;
 import woodle.backend.model.Appointment;
 import woodle.backend.model.Member;
-import woodle.backend.rest.*;
+import woodle.backend.rest.AppointmentResource;
+import woodle.backend.rest.JaxRsActivator;
+import woodle.backend.rest.RegisterResource;
 
 import javax.ws.rs.ApplicationPath;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
@@ -30,18 +29,14 @@ public class RestClientTest {
     public static final String APPOINTMENT_ID = JSON_HACKING + "-" + APPOINTMENT_DATE;
 
 
-    AppointmentResource appointmentClient;
-    MemberResource memberClient;
-    ManagementResource managementResource;
-    RegisterResource registerClient;
-
+    public static final String SRC_MAIN_RESOURCES = "src/main/resources";
     public static final String SRC_MAIN_WEBAPP_WEB_INF = "src/main/webapp/WEB-INF";
     /**
      * module providing basic authentication
      */
     public static final Archive<WebArchive> AUTHENTICATION = ShrinkWrap.create(WebArchive.class)
-            .addAsResource(new File(SRC_MAIN_WEBAPP_WEB_INF + "/roles.properties"))
-            .addAsResource(new File(SRC_MAIN_WEBAPP_WEB_INF + "/users.properties"))
+            .addAsResource(new File(SRC_MAIN_RESOURCES + "/roles.properties"))
+            .addAsResource(new File(SRC_MAIN_RESOURCES + "/users.properties"))
             .addAsWebInfResource(new File(SRC_MAIN_WEBAPP_WEB_INF + "/web.xml"))
             .addAsWebInfResource(new File(SRC_MAIN_WEBAPP_WEB_INF + "/jboss-web.xml"));
     protected static final String RESOURCE_PREFIX = JaxRsActivator.class.getAnnotation(ApplicationPath.class).value().substring(1);
@@ -50,31 +45,14 @@ public class RestClientTest {
     @ArquillianResource
     URL deploymentUrl;
 
-    @Before
-    public void init() {
-        DatatypeFactory dtf;
-        try {
-            dtf = DatatypeFactory.newInstance();
-        } catch (DatatypeConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-        //APPOINTMENT_DATE = dtf.newXMLGregorianCalendar("2012-02-01T13:10:00.000+01:00");
-
-        appointmentClient = client(AppointmentResource.class);
-        memberClient = client(MemberResource.class);
-        managementResource = client(ManagementResource.class);
-        registerClient = client(RegisterResource.class);
-    }
-
     /**
      * @param clazz
-     * @param <T>
      * @return a Rest Client to clazz
      */
-    protected <T> T client(Class<? extends T> clazz) {
+    protected <T> T client(Class<? extends T> clazz, String userEmail, String password) {
         String path = deploymentUrl.toString() + RESOURCE_PREFIX;
 
-        Credentials credentials = new UsernamePasswordCredentials("testuser", "secret");
+        Credentials credentials = new UsernamePasswordCredentials(userEmail, password);
         DefaultHttpClient httpClient = new DefaultHttpClient();
         httpClient.getCredentialsProvider().setCredentials(
                 new AuthScope(AuthScope.ANY),
