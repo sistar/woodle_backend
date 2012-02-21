@@ -1,10 +1,13 @@
 package woodle.backend.model;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ComparableAttendance extends Attendance implements Comparable<ComparableAttendance> {
     private Long timeOfEntry;
 
     public ComparableAttendance() {
+        this.timeOfEntry = System.currentTimeMillis();
     }
 
     public ComparableAttendance(Attendance attendance) {
@@ -20,22 +23,28 @@ public class ComparableAttendance extends Attendance implements Comparable<Compa
 
     }
 
-    public void setTimeOfEntry(long timeOfEntry) {
+    public void setTimeOfEntry(Long timeOfEntry) {
 
         this.timeOfEntry = timeOfEntry;
     }
 
-    public long getTimeOfEntry() {
-        return timeOfEntry;
+    public Long getTimeOfEntry() {
+        return this.timeOfEntry;
     }
 
     @Override
     public int compareTo(ComparableAttendance o) {
-        int timeCompared = this.timeOfEntry.compareTo(o.getTimeOfEntry());
-        if (timeCompared != 0) {
-            return timeCompared;
+        if (!(this.timeOfEntry == null || o.timeOfEntry == null)) {
+            int timeCompared = this.timeOfEntry.compareTo(o.getTimeOfEntry());
+            if (timeCompared != 0) {
+                return timeCompared;
+            }
         }
-        return attendantEmail.compareTo(o.getAttendantEmail());
+        if (this.attendantEmail != null && o.getAttendantEmail() != null) {
+            return attendantEmail.compareTo(o.getAttendantEmail());
+        } else {
+            return 1;
+        }
     }
 
     @Override

@@ -43,7 +43,16 @@ public class AppointmentClientTest extends RestClientTest {
     @Test
     public void testCreateAppointment() throws Exception {
         client(ManagementResource.class, SANTA_CLAUS_NO, "secret").reset();
-        createAppointment(SANTA_CLAUS_NO, "secret");
+        createAppointment(SANTA_CLAUS_NO, "secret", false);
+        List<Appointment> appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret")
+                .lookupAppointmentsForMemberEMail(SANTA_CLAUS_NO);
+        assertThat(appointments.iterator().next().getStartDate(), is(equalTo(APPOINTMENT_DATE)));
+    }
+
+    @Test
+    public void testCreateAppointmentWithoutTimeOfEntry() throws Exception {
+        client(ManagementResource.class, SANTA_CLAUS_NO, "secret").reset();
+        createAppointment(SANTA_CLAUS_NO, "secret", false);
         List<Appointment> appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret")
                 .lookupAppointmentsForMemberEMail(SANTA_CLAUS_NO);
         assertThat(appointments.iterator().next().getStartDate(), is(equalTo(APPOINTMENT_DATE)));
@@ -60,7 +69,7 @@ public class AppointmentClientTest extends RestClientTest {
     @Test
     public void testAttendAppointment() throws Exception {
         client(ManagementResource.class, SANTA_CLAUS_NO, "secret").reset();
-        createAppointment(SANTA_CLAUS_NO, "secret");
+        createAppointment(SANTA_CLAUS_NO, "secret", false);
         Appointment appointment = soleAppointment();
 
         String attend = client(AppointmentResource.class, MAREN_SOETEBIER_GOOGLEMAIL_COM, "secret")
@@ -108,8 +117,8 @@ public class AppointmentClientTest extends RestClientTest {
     @Test
     public void testListAppointments() throws Exception {
         client(ManagementResource.class, SANTA_CLAUS_NO, "secret").reset();
-        createAppointment(SANTA_CLAUS_NO, "secret");
-        createAppointment(MAREN_SOETEBIER_GOOGLEMAIL_COM, "secret");
+        createAppointment(SANTA_CLAUS_NO, "secret", false);
+        createAppointment(MAREN_SOETEBIER_GOOGLEMAIL_COM, "secret", false);
         List<Appointment> appointments = client(AppointmentResource.class, SANTA_CLAUS_NO, "secret").clientGetAppointments();
         assertThat(appointments.size(), is(equalTo(2)));
         assertThat(appointments.get(1).getAttendances().iterator().next().getCalendarEventId(), is(equalTo("CAL1234")));

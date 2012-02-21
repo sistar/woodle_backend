@@ -22,7 +22,7 @@ import javax.ws.rs.ApplicationPath;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.TreeSet;
+import java.util.HashSet;
 
 public class RestClientTest {
     public static final String SANTA_CLAUS_NO = "santa@claus.no";
@@ -77,7 +77,16 @@ public class RestClientTest {
         return member;
     }
 
-    public Appointment createAppointment(AppointmentResource appointmentClient, String userEmail) {
+    public Appointment createAppointment(AppointmentResource appointmentClient, String userEmail, boolean sendTimeOfEntry) {
+
+
+        ComparableAttendance cal1234 = new ComparableAttendance(SANTA_CLAUS_NO, "CAL1234");
+        ComparableAttendance cal666 = new ComparableAttendance("rupert@north.pole", "CAL666");
+        if (!sendTimeOfEntry) {
+            cal1234.setTimeOfEntry(null);
+            cal666.setTimeOfEntry(null);
+
+        }
         Appointment appointment = new Appointment(
                 APPOINTMENT_ID,
                 JSON_HACKING,
@@ -85,8 +94,8 @@ public class RestClientTest {
                 "icy JSON stuff",
                 APPOINTMENT_DATE,
                 APPOINTMENT_DATE,
-                new TreeSet<ComparableAttendance>(Arrays.asList(new ComparableAttendance(SANTA_CLAUS_NO, "CAL1234"))),
-                new TreeSet<ComparableAttendance>(Arrays.asList(new ComparableAttendance("rupert@north.pole", "CAL666"))),
+                new HashSet<ComparableAttendance>(Arrays.asList(cal1234)),
+                new HashSet<ComparableAttendance>(Arrays.asList(cal666)),
                 userEmail, 2);
         //store appointment to woodle backend
         appointmentClient.create(appointment);
@@ -94,8 +103,8 @@ public class RestClientTest {
         return appointment;
     }
 
-    protected void createAppointment(String userEmail, String password) {
+    protected void createAppointment(String userEmail, String password, boolean sendTimeOfEntry) {
         createMember(client(RegisterResource.class, userEmail, password), userEmail, password);
-        createAppointment(client(AppointmentResource.class, userEmail, password), userEmail);
+        createAppointment(client(AppointmentResource.class, userEmail, password), userEmail, sendTimeOfEntry);
     }
 }
