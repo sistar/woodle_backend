@@ -19,8 +19,9 @@ import woodle.backend.util.Resources;
 
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.number.OrderingComparison.greaterThan;
+import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.Assert.assertThat;
 
 
@@ -52,10 +53,19 @@ public class AppointmentClientTest extends RestClientTest {
     @Test
     public void testCreateAppointmentWithoutTimeOfEntry() throws Exception {
         client(ManagementResource.class, SANTA_CLAUS_NO, "secret").reset();
+        long beforeSubmission = System.currentTimeMillis();
         createAppointment(SANTA_CLAUS_NO, "secret", false);
+        long afterSubmission = System.currentTimeMillis();
+
         List<Appointment> appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret")
                 .lookupAppointmentsForMemberEMail(SANTA_CLAUS_NO);
-        assertThat(appointments.iterator().next().getStartDate(), is(equalTo(APPOINTMENT_DATE)));
+        Appointment appointment = appointments.iterator().next();
+        assertThat(appointment.getStartDate(), is(equalTo(APPOINTMENT_DATE)));
+        Long timeOfEntry = appointment.getAttendances().iterator().next().getTimeOfEntry();
+        assertThat(timeOfEntry, notNullValue());
+        assertThat(timeOfEntry, is(greaterThan(beforeSubmission)));
+        assertThat(timeOfEntry, is(lessThan(afterSubmission)));
+
     }
 
     @Test
