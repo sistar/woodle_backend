@@ -39,7 +39,7 @@ public class MemberClientTest extends RestClientTest {
                 )
 
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml").addClass(Resources.class)
-                .merge(AUTHENTICATION);
+                .merge(AUTHENTICATION).merge(PERSISTENCE);
     }
 
     @Test

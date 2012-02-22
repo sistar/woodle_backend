@@ -1,13 +1,17 @@
 package woodle.backend.data;
 
+import woodle.backend.controller.MemberRegistration;
 import woodle.backend.model.*;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.util.*;
 import java.util.logging.Logger;
 
 @ApplicationScoped
 public class WoodleStore {
+    @Inject
+    MemberRegistration memberRegistration;
 
     Logger log = Logger.getLogger(this.getClass().getName());
 
@@ -42,6 +46,8 @@ public class WoodleStore {
 
     public void saveMember(Member member) {
         memberMap.put(member.getEmail(), member);
+        //memberRegistration.register(new Principle(member.getEmail(),member.getPassword()));
+
     }
 
     public void resetMembers() {

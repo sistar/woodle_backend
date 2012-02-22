@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.resteasy.client.ProxyFactory;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -14,6 +15,7 @@ import woodle.backend.data.WoodleStore;
 import woodle.backend.model.Appointment;
 import woodle.backend.model.Attendance;
 import woodle.backend.model.ComparableAttendance;
+import woodle.backend.model.Member;
 import woodle.backend.rest.AppointmentResource;
 import woodle.backend.rest.ManagementResource;
 import woodle.backend.rest.MemberResource;
@@ -44,7 +46,8 @@ public class AppointmentClientTest extends RestClientTest {
                 .addClasses(WoodleStore.class
                 )
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml").addClass(Resources.class)
-                .merge(AUTHENTICATION);
+                .merge(AUTHENTICATION)
+                .merge(PERSISTENCE);
     }
 
     @Test
@@ -182,6 +185,14 @@ public class AppointmentClientTest extends RestClientTest {
         assertThat(appointments.get(0).getUser(), is(SANTA_CLAUS_NO));
         assertThat(appointments.get(1).getUser(), is(MAREN_SOETEBIER_GOOGLEMAIL_COM));
 
+        Member sampleMember = new Member("sample@rest.com", "secret", "040-1234");
+        ProxyFactory.create(RegisterResource.class, path()).createMember(
+                sampleMember);
+
+        /*appointments = client(AppointmentResource.class,
+                         sampleMember.getEmail(),
+                         sampleMember.getPassword()).clientGetAppointments();
+        */
     }
 
 }

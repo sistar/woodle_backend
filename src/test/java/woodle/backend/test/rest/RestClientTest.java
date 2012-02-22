@@ -11,6 +11,8 @@ import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import woodle.backend.controller.MemberRegistration;
+import woodle.backend.entity.Role;
 import woodle.backend.model.Appointment;
 import woodle.backend.model.ComparableAttendance;
 import woodle.backend.model.Member;
@@ -39,8 +41,16 @@ public class RestClientTest {
     public static final Archive<WebArchive> AUTHENTICATION = ShrinkWrap.create(WebArchive.class)
             .addAsResource(new File(SRC_MAIN_RESOURCES + "/roles.properties"))
             .addAsResource(new File(SRC_MAIN_RESOURCES + "/users.properties"))
+            .addAsResource("META-INF/persistence.xml")
             .addAsWebInfResource(new File(SRC_MAIN_WEBAPP_WEB_INF + "/web.xml"))
-            .addAsWebInfResource(new File(SRC_MAIN_WEBAPP_WEB_INF + "/jboss-web.xml"));
+            .addAsWebInfResource(new File(SRC_MAIN_WEBAPP_WEB_INF + "/jboss-web.xml")
+            );
+
+    public static final Archive<WebArchive> PERSISTENCE = ShrinkWrap.create(WebArchive.class).
+            addPackage(Role.class.getPackage()).
+            addPackage(MemberRegistration.class.getPackage());
+
+
     protected static final String RESOURCE_PREFIX = JaxRsActivator.class.getAnnotation(ApplicationPath.class).value().substring(1);
     public static final String MAREN_SOETEBIER_GOOGLEMAIL_COM = "maren.soetebier@googlemail.com";
 
@@ -53,7 +63,7 @@ public class RestClientTest {
      * @return a Rest Client to clazz
      */
     protected <T> T client(Class<? extends T> clazz, String userEmail, String password) {
-        String path = deploymentUrl.toString() + RESOURCE_PREFIX;
+
 
         Credentials credentials = new UsernamePasswordCredentials(userEmail, password);
         DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -64,7 +74,11 @@ public class RestClientTest {
 
 
         return ProxyFactory.create(clazz,
-                path, clientExecutor);
+                path(), clientExecutor);
+    }
+
+    public String path() {
+        return deploymentUrl.toString() + RESOURCE_PREFIX;
     }
 
     public Member createMember(RegisterResource registerClient, String email, String password) {

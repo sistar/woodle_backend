@@ -10,13 +10,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import woodle.backend.controller.MemberRegistration;
+import woodle.backend.entity.Principle;
 import woodle.backend.model.Member;
 import woodle.backend.util.Resources;
 
 import javax.inject.Inject;
 import java.util.logging.Logger;
-
-import static org.junit.Assert.assertNotNull;
 
 @Ignore(value = "persistence not implemented")
 @RunWith(Arquillian.class)
@@ -36,15 +35,8 @@ public class MemberRegistrationTest {
 
     @Test
     public void testRegister() throws Exception {
-        Member newMember = memberRegistration.getNewMember();
+        memberRegistration.register(new Principle("jane@mailinator.com", ("topSecret")));
 
-        newMember.setEmail("jane@mailinator.com");
-        newMember.setPhoneNumber("2125551234");
-        newMember.setPassword("topSecret");
-
-        memberRegistration.register();
-        assertNotNull(newMember.getId());
-        log.info(newMember.getEmail() + " was persisted with id " + newMember.getId());
     }
 
 }
