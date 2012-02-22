@@ -98,24 +98,77 @@ public class WoodleStore {
         return appointmentMap.get(appointment.createAppointmentKey());
     }
 
-    public String attend(String appointmentId, Attendance attendance) {
-        Appointment appointment = appointmentMap.get(Appointment.createAppointmentKey(attendance.getCreatorEmail(), appointmentId));
-        return appointment.attend(attendance);
+    public String attend(String creatorEmail, String title, String startDate,
+                         Attendance attendance) throws UnkownAppointmentException {
+        AppointmentKey appointmentKey = Appointment.createAppointmentKey(creatorEmail, title, startDate);
+        return attend(appointmentKey, attendance);
     }
 
-    public String cancel(String appointmentId, String creatorEmail, String userEmail) {
-        Appointment appointment = appointmentMap.get(Appointment.createAppointmentKey(creatorEmail, appointmentId));
-        return appointment.cancel(userEmail);
-
+    public String attend(String creatorEmail,
+                         String appointmentId,
+                         Attendance attendance) throws UnkownAppointmentException {
+        AppointmentKey appointmentKey = Appointment.createAppointmentKey(creatorEmail, appointmentId);
+        return attend(appointmentKey, attendance);
     }
 
-    public void deleteAppointment(String appointmentId, String creatorEmail) {
+    public String attend(String creatorEmail,
+                         String title,
+                         String startDate,
+                         String calendarEventId,
+                         String attendendEmail) throws UnkownAppointmentException {
+        AppointmentKey appointmentKey = Appointment.createAppointmentKey(creatorEmail, title, startDate);
+        Attendance attendance = new Attendance(attendendEmail, calendarEventId);
+        return attend(appointmentKey, attendance);
+    }
+
+
+    private String attend(AppointmentKey appointmentKey, Attendance attendance) throws UnkownAppointmentException {
+        return nullSafeAppointmentForKey(appointmentKey).attend(attendance);
+    }
+
+    @Deprecated
+    private Appointment nullSafeAppointmentForAppointmentId(String creatorEmail,
+                                                            String appointmentId) throws UnkownAppointmentException {
+
         AppointmentKey appointmentKey = Appointment.createAppointmentKey(creatorEmail, appointmentId);
         Appointment appointment = appointmentMap.get(appointmentKey);
+        if (appointment == null) {
+            throw new UnkownAppointmentException(appointmentKey.getId());
+        }
+        return appointment;
+    }
+
+    @Deprecated
+    public String cancel(String appointmentId,
+                         String creatorEmail,
+                         String userEmail) throws UnkownAppointmentException {
+        return nullSafeAppointmentForAppointmentId(creatorEmail, appointmentId).cancel(userEmail);
+
+    }
+
+    public String cancel(AppointmentKey appointmentKey,
+                         String attendantEmail) throws UnkownAppointmentException {
+        return nullSafeAppointmentForKey(appointmentKey).cancel(attendantEmail);
+    }
+
+    @Deprecated
+    public void deleteAppointment(String appointmentId, String creatorEmail) {
+        deleteAppointment(Appointment.createAppointmentKey(creatorEmail, appointmentId));
+    }
+
+    public void deleteAppointment(AppointmentKey appointmentKey) {
         appointmentMap.remove(appointmentKey);
     }
 
     public void resetAppointments() {
         appointmentMap.clear();
+    }
+
+    private Appointment nullSafeAppointmentForKey(AppointmentKey appointmentKey) throws UnkownAppointmentException {
+        Appointment appointment = appointmentMap.get(appointmentKey);
+        if (appointment == null) {
+            throw new UnkownAppointmentException(appointmentKey.getId());
+        }
+        return appointment;
     }
 }

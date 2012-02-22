@@ -103,7 +103,7 @@ public class RestClientTest {
         return appointment;
     }
 
-    protected void createAppointment(String userEmail, String password, boolean sendTimeOfEntry) {
+    protected void createMemberAndAppointment(String userEmail, String password, boolean sendTimeOfEntry) {
         createMember(client(RegisterResource.class, userEmail, password), userEmail, password);
         createAppointment(client(AppointmentResource.class, userEmail, password), userEmail, sendTimeOfEntry);
     }

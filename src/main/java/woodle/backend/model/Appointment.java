@@ -41,6 +41,10 @@ public class Appointment {
 
     public static String DATE_MATCH = "-(?=\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}.*)";
 
+    public static AppointmentKey createAppointmentKey(String creatorEmail, String title, String startDate) {
+        return new AppointmentKey(title, startDate, creatorEmail);
+    }
+
     public static AppointmentKey createAppointmentKey(String creatorEmail, String appointmentId) {
         String[] splitResult = appointmentId.split(DATE_MATCH);
         return new AppointmentKey(splitResult[0], splitResult[1], creatorEmail);

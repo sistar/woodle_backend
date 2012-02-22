@@ -75,8 +75,8 @@ public class MemberClientTest extends RestClientTest {
     @Test
     public void testShowAllAppointmentsWhichIHaveCreated() throws Exception {
         client(ManagementResource.class, SANTA_CLAUS_NO, "secret").reset();
-        createAppointment(SANTA_CLAUS_NO, "secret", false);
-        createAppointment(MAREN_SOETEBIER_GOOGLEMAIL_COM, "secret", false);
+        createMemberAndAppointment(SANTA_CLAUS_NO, "secret", false);
+        createMemberAndAppointment(MAREN_SOETEBIER_GOOGLEMAIL_COM, "secret", false);
         List<Appointment> appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret").lookupAppointmentsForMemberEMail(SANTA_CLAUS_NO);
         assertThat(appointments.size(), is(equalTo(1)));
         assertThat(appointments.get(0).getUser(), is(equalTo(SANTA_CLAUS_NO)));
@@ -85,8 +85,8 @@ public class MemberClientTest extends RestClientTest {
     @Test
     public void testShowAllAppointmentsWhichIBelongTo() throws Exception {
         client(ManagementResource.class, SANTA_CLAUS_NO, "secret").reset();
-        createAppointment(SANTA_CLAUS_NO, "secret", false);
-        createAppointment(MAREN_SOETEBIER_GOOGLEMAIL_COM, "secret", false);
+        createMemberAndAppointment(SANTA_CLAUS_NO, "secret", false);
+        createMemberAndAppointment(MAREN_SOETEBIER_GOOGLEMAIL_COM, "secret", false);
         List<Appointment> appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret").lookupAppointmentsAttendance(SANTA_CLAUS_NO);
         assertThat(appointments.size(), is(equalTo(2)));
         appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret").lookupAppointmentsAttendanceWaiting(SANTA_CLAUS_NO);

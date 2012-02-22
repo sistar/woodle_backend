@@ -16,18 +16,46 @@ public interface AppointmentResource {
 
     @PUT
     @Consumes(value = "application/json")
-    @Path("/{appointmentId}/attendance")
-    public String attend(@PathParam("appointmentId") String appointmentId, Attendance attendance);
+    @Path("/{creatorEmail}/{appointmentId}/attendance")
+    @Deprecated
+    public String attend(@PathParam("creatorEmail") String creatorEmail,
+                         @PathParam("appointmentId") String appointmentId,
+                         Attendance attendance);
+
+    @PUT
+    @Path("/{creatorEmail}/{title}/{startDate}")
+    public String attend(@PathParam("creatorEmail") String creatorEmail,
+                         @PathParam("title") String title,
+                         @PathParam("startDate") String startDate,
+                         @QueryParam("calendarEventId") String calendarEventId
+    );
 
     @DELETE
     @Consumes(value = "application/json")
     @Path("/{appointmentId}/attendance")
+    @Deprecated
     public String cancel(@PathParam("appointmentId") String appointmentId, String creatorEmail);
+
+    @DELETE
+    @Path("/{creatorEmail}/{title}/{startDate}/attendance")
+    public String cancel(@PathParam("creatorEmail") String creatorEmail,
+                         @PathParam("title") String title,
+                         @PathParam("startDate") String startDate
+    );
+
 
     @DELETE
     @Consumes(value = "application/json")
     @Path("/{appointmentId}")
+    @Deprecated
     public Response.Status deleteAppointment(@PathParam("appointmentId") String appointmentId, String creatorEmail);
+
+    @DELETE
+    @Path("/{creatorEmail}/{title}/{startDate}")
+    public Response.Status deleteAppointment(@PathParam("creatorEmail") String creatorEmail,
+                                             @PathParam("title") String title,
+                                             @PathParam("startDate") String startDate);
+
 
     @GET
     @Produces(value = "application/json")
@@ -35,6 +63,9 @@ public interface AppointmentResource {
 
     @GET
     @Produces(value = "application/json")
-    @Path("/{appointmentId}")
-    Appointment lookupById(@PathParam("appointmentId") String appointmentId);
+    @Path("/{creatorEmail}/{title}/{startDate}")
+    Appointment lookupById(@PathParam("creatorEmail") String creatorEmail,
+                           @PathParam("title") String title,
+                           @PathParam("startDate") String startDate
+    );
 }

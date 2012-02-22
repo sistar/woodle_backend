@@ -65,4 +65,11 @@ public class AppointmentKey {
                 ", creatorEmail='" + creatorEmail + '\'' +
                 '}';
     }
+
+    /*
+   @return a key formatted title-2012-03-21T16.20.00.000+01:00
+    */
+    public String getId() {
+        return this.title + "-" + start;
+    }
 }

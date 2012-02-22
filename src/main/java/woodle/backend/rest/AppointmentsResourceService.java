@@ -1,14 +1,12 @@
 package woodle.backend.rest;
 
 import woodle.backend.data.WoodleStore;
-import woodle.backend.model.Appointment;
-import woodle.backend.model.AppointmentKey;
-import woodle.backend.model.Attendance;
-import woodle.backend.model.UnkownMemberException;
+import woodle.backend.model.*;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -44,18 +42,65 @@ public class AppointmentsResourceService implements AppointmentResource {
     }
 
     @Override
-    public String attend(String appointmentId, Attendance attendance) {
-        return woodleStore.attend(appointmentId, attendance);
+    @Deprecated
+    public String attend(String creatorEmail,
+                         String appointmentId,
+                         Attendance attendance) {
+        try {
+            return woodleStore.attend(creatorEmail, appointmentId, attendance);
+        } catch (UnkownAppointmentException e) {
+            throw new WebApplicationException(e, Response.Status.NOT_FOUND);
+        }
     }
 
     @Override
-    public String cancel(String appointmentId, String creatorEmail) {
-        return woodleStore.cancel(appointmentId, creatorEmail, context.getUserPrincipal().getName());
+    public String attend(@PathParam("creatorEmail") String creatorEmail,
+                         @PathParam("title") String title,
+                         @PathParam("startDate") String startDate,
+                         @QueryParam("calendarEventId") String calendarEventId) {
+        try {
+            return woodleStore.attend(creatorEmail, title, startDate, calendarEventId,
+                    context.getUserPrincipal().getName());
+        } catch (UnkownAppointmentException e) {
+            throw new WebApplicationException(e, Response.Status.NOT_FOUND);
+        }
     }
 
     @Override
+    @Deprecated
+    public String cancel(String appointmentId,
+                         String creatorEmail) {
+        try {
+            return woodleStore.cancel(appointmentId, creatorEmail, context.getUserPrincipal().getName());
+        } catch (UnkownAppointmentException e) {
+            throw new WebApplicationException(e, Response.Status.NOT_FOUND);
+        }
+    }
+
+    @Override
+    public String cancel(@PathParam("creatorEmail") String creatorEmail,
+                         @PathParam("title") String title,
+                         @PathParam("startDate") String startDate) {
+        try {
+            return woodleStore.cancel(new AppointmentKey(title, startDate, creatorEmail),
+                    context.getUserPrincipal().getName());
+        } catch (UnkownAppointmentException e) {
+            throw new WebApplicationException(e, Response.Status.NOT_FOUND);
+        }
+    }
+
+    @Override
+    @Deprecated
     public Response.Status deleteAppointment(@PathParam("appointmentId") String appointmentId, String creatorEmail) {
         woodleStore.deleteAppointment(appointmentId, creatorEmail);
+        return Response.Status.NO_CONTENT;
+    }
+
+    @Override
+    public Response.Status deleteAppointment(@PathParam("creatorEmail") String creatorEmail,
+                                             @PathParam("title") String title,
+                                             @PathParam("startDate") String startDate) {
+        woodleStore.deleteAppointment(new AppointmentKey(title, startDate, creatorEmail));
         return Response.Status.NO_CONTENT;
     }
 
@@ -65,9 +110,11 @@ public class AppointmentsResourceService implements AppointmentResource {
     }
 
     @Override
-    public Appointment lookupById(@PathParam("appointmentId") String clientAppointmentId) {
+    public Appointment lookupById(@PathParam("creatorEmail") String creatorEmail,
+                                  @PathParam("title") String title,
+                                  @PathParam("startDate") String startDate) {
+        AppointmentKey appointmentKey = Appointment.createAppointmentKey(creatorEmail, title, startDate);
 
-        AppointmentKey appointmentKey = Appointment.createAppointmentKey(context.getUserPrincipal().getName(), clientAppointmentId);
 
         Appointment appointment = woodleStore.getAppointmentMap().get(appointmentKey);
         if (appointment == null) {
@@ -86,6 +133,5 @@ public class AppointmentsResourceService implements AppointmentResource {
             return appointment;
         }
     }
-
 }
 
