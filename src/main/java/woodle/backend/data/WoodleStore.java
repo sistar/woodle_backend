@@ -1,6 +1,7 @@
 package woodle.backend.data;
 
 import woodle.backend.controller.MemberRegistration;
+import woodle.backend.entity.Principle;
 import woodle.backend.model.*;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -46,7 +47,7 @@ public class WoodleStore {
 
     public void saveMember(Member member) {
         memberMap.put(member.getEmail(), member);
-        //memberRegistration.register(new Principle(member.getEmail(),member.getPassword()));
+        memberRegistration.register(new Principle(member.getEmail(), member.getPassword()));
 
     }
 

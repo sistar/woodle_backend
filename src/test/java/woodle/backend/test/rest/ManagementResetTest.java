@@ -27,7 +27,7 @@ public class ManagementResetTest extends RestClientTest {
                         WoodleStore.class,
                         JaxRsActivator.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml").addClass(Resources.class)
-                .merge(AUTHENTICATION).merge(PERSISTENCE);
+                .merge(AUTHENTICATION()).merge(PERSISTENCE());
     }
 
     @Test

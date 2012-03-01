@@ -1,13 +1,11 @@
 package woodle.backend.entity;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "PRINCIPLE")
+@Table(name = "PRINCIPLES")
 public class Principle {
 
     private String id;
@@ -20,8 +18,8 @@ public class Principle {
         this.id = email;
         this.password = password;
         Role role = new Role();
-        role.setRoleGroup("known");
-        role.setUserRole("known");
+        role.setRole_group("known");
+        role.setUser_role("known");
         this.roles.add(role);
     }
 
@@ -29,9 +27,10 @@ public class Principle {
         this.roles = roles;
     }
 
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<Role>();
 
     @Id
+    @Column(name = "PRINCIPAL_ID")
     public String getId() {
         return id;
     }
@@ -51,6 +50,10 @@ public class Principle {
     private String password;
 
     @ElementCollection
+    @CollectionTable(
+            name = "ROLES",
+            joinColumns = @JoinColumn(name = "principal_id")
+    )
     public Set<Role> getRoles() {
         return this.roles;
     }

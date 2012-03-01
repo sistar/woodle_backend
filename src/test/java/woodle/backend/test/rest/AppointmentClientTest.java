@@ -5,9 +5,7 @@ import com.google.common.collect.Sets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.resteasy.client.ProxyFactory;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,10 +15,8 @@ import woodle.backend.model.Attendance;
 import woodle.backend.model.ComparableAttendance;
 import woodle.backend.model.Member;
 import woodle.backend.rest.AppointmentResource;
-import woodle.backend.rest.ManagementResource;
 import woodle.backend.rest.MemberResource;
 import woodle.backend.rest.RegisterResource;
-import woodle.backend.util.Resources;
 
 import java.util.HashSet;
 import java.util.List;
@@ -43,17 +39,15 @@ public class AppointmentClientTest extends RestClientTest {
         return ShrinkWrap.create(WebArchive.class, "woodle_backend.war").
                 addPackage("woodle.backend.model")
                 .addPackage("woodle.backend.rest")
-                .addClasses(WoodleStore.class
-                )
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml").addClass(Resources.class)
-                .merge(AUTHENTICATION)
-                .merge(PERSISTENCE);
+                .addClasses(WoodleStore.class)
+                .merge(COMMON())
+                .merge(AUTHENTICATION())
+                .merge(PERSISTENCE());
     }
 
     @Test
     public void testCreateAppointment() throws Exception {
-        client(ManagementResource.class, SANTA_CLAUS_NO, "secret").reset();
-        createMemberAndAppointment(SANTA_CLAUS_NO, "secret", false);
+        resetCreateDefaultUserAndAppointment();
         List<Appointment> appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret")
                 .lookupAppointmentsForMemberEMail(SANTA_CLAUS_NO);
         assertThat(appointments.iterator().next().getStartDate(), is(equalTo(APPOINTMENT_DATE)));
@@ -61,28 +55,26 @@ public class AppointmentClientTest extends RestClientTest {
 
     @Test
     public void testCreateAppointmentWithoutTimeOfEntry() throws Exception {
-        client(ManagementResource.class, SANTA_CLAUS_NO, "secret").reset();
         long beforeSubmission = System.currentTimeMillis();
-        createMemberAndAppointment(SANTA_CLAUS_NO, "secret", false);
+        resetCreateDefaultUserAndAppointment();
         long afterSubmission = System.currentTimeMillis();
 
         List<Appointment> appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret")
                 .lookupAppointmentsForMemberEMail(SANTA_CLAUS_NO);
         Appointment appointment = appointments.iterator().next();
         assertThat(appointment.getStartDate(), is(equalTo(APPOINTMENT_DATE)));
-        Long timeOfEntry = appointment.getAttendances().iterator().next().getTimeOfEntry();
+        ComparableAttendance attendance = appointment.getAttendances().iterator().next();
+        Long timeOfEntry = attendance.getTimeOfEntry();
         assertThat(timeOfEntry, notNullValue());
         assertThat(timeOfEntry, is(greaterThan(beforeSubmission)));
         assertThat(timeOfEntry, is(lessThan(afterSubmission)));
-
+        assertThat(attendance.getCalendarEventId(), is(notNullValue()));
     }
 
     @Test
     public void testThatISeeOnlyAppointmentsIAttend() throws Exception {
 
-        client(ManagementResource.class, SANTA_CLAUS_NO, "secret").reset();
-        createMember(client(RegisterResource.class, SANTA_CLAUS_NO, "secret"), SANTA_CLAUS_NO, "secret");
-
+        resetCreateDefaultUser();
 
         HashSet<ComparableAttendance> attendances = Sets.newHashSet();
         HashSet<ComparableAttendance> waiting = Sets.newHashSet();
@@ -113,6 +105,9 @@ public class AppointmentClientTest extends RestClientTest {
         appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret")
                 .lookupAppointmentsAttendance(SANTA_CLAUS_NO);
         assertThat(appointments.size(), is(1));
+        for (ComparableAttendance attendance : appointments.get(0).getAttendances()) {
+            assertThat(attendance.getCalendarEventId(), notNullValue());
+        }
 
 
     }
@@ -120,22 +115,23 @@ public class AppointmentClientTest extends RestClientTest {
 
     @Test
     public void testDeleteAppointment() throws Exception {
-        testCreateAppointment();
+        resetCreateDefaultUserAndAppointment();
         Appointment appointment = soleAppointment();
-        client(AppointmentResource.class, MAREN_SOETEBIER_GOOGLEMAIL_COM, "secret").deleteAppointment(appointment.getId(), appointment.getUser());
+        client(AppointmentResource.class, SANTA_CLAUS_NO, "secret").deleteAppointment(appointment.getId(), appointment.getUser());
         assertNoAppointment();
     }
 
     @Test
     public void testAttendAppointment() throws Exception {
-        client(ManagementResource.class, SANTA_CLAUS_NO, "secret").reset();
-        createMemberAndAppointment(SANTA_CLAUS_NO, "secret", false);
+        resetCreateDefaultUserAndAppointment();
         Appointment appointment = soleAppointment();
-
-        String attend = client(AppointmentResource.class, MAREN_SOETEBIER_GOOGLEMAIL_COM, "secret")
+        assertThat(appointment.getAttendances().size(), is(equalTo(1)));
+        String attend = client(AppointmentResource.class, SANTA_CLAUS_NO, "secret")
                 .attend(SANTA_CLAUS_NO, appointment.getId(),
                         new Attendance(MAREN_SOETEBIER_GOOGLEMAIL_COM, "CAL54321"));
         assertThat(attend, is(equalTo("confirmed")));
+        appointment = soleAppointment();
+        assertThat(appointment.getAttendances().size(), is(equalTo(2)));
     }
 
     private Appointment soleAppointment() {
@@ -156,10 +152,11 @@ public class AppointmentClientTest extends RestClientTest {
         testAttendAppointment();
 
         assertThat(soleAppointment().getAttendances().size(), is(equalTo(2)));
-        String attend = client(AppointmentResource.class, MAREN_SOETEBIER_GOOGLEMAIL_COM, "secret").cancel(soleAppointment().getId(), soleAppointment().getUser());
+        String attend = client(AppointmentResource.class, SANTA_CLAUS_NO, "secret").cancel(soleAppointment().getId(), soleAppointment().getUser());
         assertThat(soleAppointment().getAttendances().size(), is(equalTo(2)));
-        assertThat(attend, is(equalTo("rupert@north.pole")));
-        attend = client(AppointmentResource.class, SANTA_CLAUS_NO, "secret").cancel(soleAppointment().getId(), soleAppointment().getUser());
+        assertThat(attend, is(equalTo(RUPERT_NORTH_POLE)));
+        client(RegisterResource.class).createMember(new Member("secret", RUPERT_NORTH_POLE, "007007007"));
+        attend = client(AppointmentResource.class, RUPERT_NORTH_POLE, "secret").cancel(soleAppointment().getId(), soleAppointment().getUser());
         assertThat(soleAppointment().getAttendances().size(), is(equalTo(1)));
         assertThat(attend, is(equalTo("")));
     }
@@ -167,8 +164,7 @@ public class AppointmentClientTest extends RestClientTest {
 
     @Test
     public void testLookupAppointmentById() throws Exception {
-        client(ManagementResource.class, SANTA_CLAUS_NO, "secret").reset();
-        testCreateAppointment();
+        resetCreateDefaultUserAndAppointment();
         Appointment appointment = client(AppointmentResource.class, SANTA_CLAUS_NO, "secret")
                 .lookupById(SANTA_CLAUS_NO, JSON_HACKING, APPOINTMENT_DATE);
         assertThat(appointment.getTitle(), is(equalTo(JSON_HACKING)));
@@ -176,23 +172,11 @@ public class AppointmentClientTest extends RestClientTest {
 
     @Test
     public void testListAppointments() throws Exception {
-        client(ManagementResource.class, SANTA_CLAUS_NO, "secret").reset();
-        createMemberAndAppointment(SANTA_CLAUS_NO, "secret", false);
+        resetCreateDefaultUser();
         createMemberAndAppointment(MAREN_SOETEBIER_GOOGLEMAIL_COM, "secret", false);
         List<Appointment> appointments = client(AppointmentResource.class, SANTA_CLAUS_NO, "secret").clientGetAppointments();
-        assertThat(appointments.size(), is(equalTo(2)));
-        assertThat(appointments.get(1).getAttendances().iterator().next().getCalendarEventId(), is(equalTo("CAL1234")));
-        assertThat(appointments.get(0).getUser(), is(SANTA_CLAUS_NO));
-        assertThat(appointments.get(1).getUser(), is(MAREN_SOETEBIER_GOOGLEMAIL_COM));
-
-        Member sampleMember = new Member("sample@rest.com", "secret", "040-1234");
-        ProxyFactory.create(RegisterResource.class, path()).createMember(
-                sampleMember);
-
-        /*appointments = client(AppointmentResource.class,
-                         sampleMember.getEmail(),
-                         sampleMember.getPassword()).clientGetAppointments();
-        */
+        assertThat(appointments.size(), is(equalTo(1)));
+        assertThat(appointments.get(0).getUser(), is(MAREN_SOETEBIER_GOOGLEMAIL_COM));
     }
 
 }

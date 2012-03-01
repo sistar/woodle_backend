@@ -4,33 +4,53 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class Role {
-    public String getUser_id() {
-        return user_id;
+
+    private String user_role;
+    private String role_group;
+
+    public Role() {
     }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+
+    public Role(String role) {
+        this.setUser_role(role);
     }
 
-    public String getUserRole() {
-        return userRole;
+    public String getUser_role() {
+        return user_role;
     }
 
-    public void setUserRole(String userRole) {
-        this.userRole = userRole;
+    public void setUser_role(String user_role) {
+        this.user_role = user_role;
     }
 
-    public String getRoleGroup() {
-        return roleGroup;
+    public String getRole_group() {
+        return role_group;
     }
 
-    public void setRoleGroup(String roleGroup) {
-        this.roleGroup = roleGroup;
+
+    public void setRole_group(String role_group) {
+        this.role_group = role_group;
     }
 
-    private String user_id;
-    private String userRole;
-    private String roleGroup;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Role)) return false;
 
+        Role role = (Role) o;
+
+        if (role_group != null ? !role_group.equals(role.role_group) : role.role_group != null) return false;
+        if (user_role != null ? !user_role.equals(role.user_role) : role.user_role != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17 + (user_role != null ? user_role.hashCode() : 0);
+        result = 31 * result + (role_group != null ? role_group.hashCode() : 0);
+        return result;
+    }
 }

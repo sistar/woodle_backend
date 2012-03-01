@@ -1,5 +1,6 @@
 package woodle.backend.rest;
 
+import woodle.backend.controller.MemberRegistration;
 import woodle.backend.data.WoodleStore;
 import woodle.backend.model.Member;
 
@@ -20,6 +21,9 @@ public class RegisterResourceService implements RegisterResource {
     @Inject
     private WoodleStore woodleStore;
 
+    @Inject
+    private MemberRegistration memberRegistration;
+
     @Override
     public void createMember(Member member) {
 
@@ -29,6 +33,11 @@ public class RegisterResourceService implements RegisterResource {
         if (woodleStore.hasMember(member.getEmail())) {
             throw new WebApplicationException(Response.Status.CONFLICT);
         }
+        if (memberRegistration.hasMember(member.getEmail())) {
+            throw new WebApplicationException(Response.Status.CONFLICT);
+        }
+
+
         logger.info("storing new member: " + member);
         woodleStore.saveMember(member);
     }
