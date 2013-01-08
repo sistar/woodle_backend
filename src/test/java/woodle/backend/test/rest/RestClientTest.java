@@ -34,16 +34,17 @@ public class RestClientTest {
     public static final String JSON_HACKING = "json Hacking";
     public static final String APPOINTMENT_DATE = "2012-02-01T13:10:00.000+01:00";
     public static final String APPOINTMENT_ID = JSON_HACKING + "-" + APPOINTMENT_DATE;
-
-
     public static final String SRC_MAIN_RESOURCES = "src/main/resources";
     public static final String SRC_MAIN_WEBAPP_WEB_INF = "src/main/webapp/WEB-INF";
     public static final String RUPERT_NORTH_POLE = "rupert@north.pole";
+    public static final String MAREN_SOETEBIER_GOOGLEMAIL_COM = "maren.soetebier@googlemail.com";
+    @ArquillianResource
+    URL deploymentUrl;
 
     /**
      * module providing basic authentication
      */
-    public static final Archive<WebArchive> AUTHENTICATION() {
+    public static Archive<WebArchive> AUTHENTICATION() {
         return ShrinkWrap.create(WebArchive.class)
                 .addPackages(true, "org.apache.http")
                 .addAsWebInfResource(new File(SRC_MAIN_WEBAPP_WEB_INF + "/web.xml"))
@@ -51,13 +52,14 @@ public class RestClientTest {
                 );
     }
 
-    public static final Archive<WebArchive> COMMON() {
+    public static Archive<WebArchive> COMMON() {
         return ShrinkWrap.create(WebArchive.class)
                 .addPackage(Resources.class.getPackage())
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsWebInfResource(new File(SRC_MAIN_WEBAPP_WEB_INF + "/jboss-deployment-structure.xml"));
     }
 
-    public static final Archive<WebArchive> PERSISTENCE() {
+    public static Archive<WebArchive> PERSISTENCE() {
         return ShrinkWrap.create(WebArchive.class).
                 addPackage(Role.class.getPackage())
                 .addAsResource("META-INF/persistence.xml")
@@ -66,17 +68,9 @@ public class RestClientTest {
                 );
     }
 
-
     protected static String RESOURCE_PREFIX() {
         return JaxRsActivator.class.getAnnotation(ApplicationPath.class).value().substring(1);
     }
-
-    public static final String MAREN_SOETEBIER_GOOGLEMAIL_COM = "maren.soetebier@googlemail.com";
-
-
-    @ArquillianResource
-    URL deploymentUrl;
-
 
     /**
      * @param clazz
@@ -92,7 +86,6 @@ public class RestClientTest {
         return ProxyFactory.create(clazz,
                 path(), clientExecutor);
     }
-
 
     /**
      * @param clazz

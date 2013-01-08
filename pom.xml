@@ -32,6 +32,13 @@ to work with JBoss EAP 6. It requires you have access to the JBoss EAP 6 maven r
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>1.0.3.Final</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
             <!-- JBoss distributes a complete set of Java EE 6 APIs including
 a Bill of Materials (BOM). A BOM specifies the versions of a "stack" (or
 a collection) of artifacts. We use this here so that we always get the correct
@@ -148,12 +155,14 @@ as the API is included in JBoss AS 7 -->
             <version>1.0.0.CR4</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jaxrs</artifactId>
             <version>2.3.0.GA</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jackson-provider</artifactId>
@@ -161,7 +170,19 @@ as the API is included in JBoss AS 7 -->
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>11.0.2</version>
+            <scope>provided</scope>
+        </dependency>
 
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.22</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -194,7 +215,79 @@ given to the generated war, and hence the context root) -->
             <plugin>
                 <groupId>org.jboss.as.plugins</groupId>
                 <artifactId>jboss-as-maven-plugin</artifactId>
-                <version>7.1.0.CR1</version>
+                <version>7.3.Final</version>
+                <executions>
+                    <execution>
+                        <id>deploy-driver-mysql</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>deploy-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <!-- default localhost <hostname>${jboss-hostname}</hostname> -->
+                            <groupId>mysql</groupId>
+                            <artifactId>mysql-connector-java</artifactId>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-datasource</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <address>subsystem=datasources,data-source=java:jboss/datasources/WoodleDS</address>
+                            <resource>
+                                <enable-resource>true</enable-resource>
+                                <properties>
+                                    <jndi-name>java:jboss/datasources/WoodleDS</jndi-name>
+                                    <enabled>true</enabled>
+                                    <connection-url>jdbc:h2:mem:test;DB_CLOSE_DELAY=-1</connection-url>
+                                    <driver-class>org.h2.Driver</driver-class>
+                                    <driver-name>h2</driver-name>
+                                    <security.user-name>sa</security.user-name>
+                                    <security.password>sa</security.password>
+                                    <pool-name>mypool</pool-name>
+                                </properties>
+                            </resource>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>MyPolicy</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <address>subsystem=security,security-domain=DBAuthTest</address>
+
+
+                            <resource>
+
+                                <properties>
+                                    <cache-type>default</cache-type>
+                                </properties>
+                                <resources>
+                                    <resource>
+                                        <address>authentication=classic</address>
+                                        <properties>
+                                            <login-modules>
+                                                !![{"code"=>"Database","flag"=>"required","module-options"=>[("dsJndiName"=>"java:jboss/datasources/WoodleDS"),
+                                                ("principalsQuery"=>"select password from PRINCIPLES where
+                                                PRINCIPAL_ID=?"),
+                                                ("rolesQuery"=>"select USER_ROLE, 'Roles' from ROLES where
+                                                PRINCIPAL_ID=?"),
+                                                ("hashAlgorithm"=>"SHA-256"),
+                                                ("hashEncoding"=>"base64")]}]
+                                            </login-modules>
+                                        </properties>
+                                    </resource>
+                                </resources>
+                            </resource>
+
+                        </configuration>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -266,7 +359,7 @@ given to the generated war, and hence the context root) -->
                 <dependency>
                     <groupId>org.jboss.as</groupId>
                     <artifactId>jboss-as-arquillian-container-managed</artifactId>
-                    <version>7.1.0.Beta1b</version>
+                    <version>7.1.2.Final</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
@@ -314,7 +407,7 @@ given to the generated war, and hence the context root) -->
                 <dependency>
                     <groupId>org.jboss.as</groupId>
                     <artifactId>jboss-as-arquillian-container-remote</artifactId>
-                    <version>7.1.0.Beta1b</version>
+                    <version>7.1.2.Final</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>

@@ -11,7 +11,7 @@ data source, the example data source is just for proofs of concept! -->
         <class>woodle.backend.entity.Principle</class>
         <properties>
             <!-- Properties for Hibernate -->
-            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <property name="hibernate.hbm2ddl.auto" value="create"/>
             <property name="hibernate.show_sql" value="true"/>
         </properties>
     </persistence-unit>

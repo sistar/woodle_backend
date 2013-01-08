@@ -11,7 +11,6 @@ public class Role {
     public Role() {
     }
 
-
     public Role(String role) {
         this.setUser_role(role);
     }
@@ -28,11 +27,9 @@ public class Role {
         return role_group;
     }
 
-
     public void setRole_group(String role_group) {
         this.role_group = role_group;
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -42,9 +39,8 @@ public class Role {
         Role role = (Role) o;
 
         if (role_group != null ? !role_group.equals(role.role_group) : role.role_group != null) return false;
-        if (user_role != null ? !user_role.equals(role.user_role) : role.user_role != null) return false;
+        return !(user_role != null ? !user_role.equals(role.user_role) : role.user_role != null);
 
-        return true;
     }
 
     @Override

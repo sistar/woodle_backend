@@ -5,7 +5,6 @@ public class AppointmentKey {
     private String start;
     private String creatorEmail;
 
-
     public String getTitle() {
         return title;
     }
@@ -33,7 +32,6 @@ public class AppointmentKey {
 
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -43,9 +41,8 @@ public class AppointmentKey {
 
         if (creatorEmail != null ? !creatorEmail.equals(that.creatorEmail) : that.creatorEmail != null) return false;
         if (start != null ? !start.equals(that.start) : that.start != null) return false;
-        if (title != null ? !title.equals(that.title) : that.title != null) return false;
+        return !(title != null ? !title.equals(that.title) : that.title != null);
 
-        return true;
     }
 
     @Override
@@ -55,7 +52,6 @@ public class AppointmentKey {
         result = 31 * result + (creatorEmail != null ? creatorEmail.hashCode() : 0);
         return result;
     }
-
 
     @Override
     public String toString() {

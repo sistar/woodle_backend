@@ -18,7 +18,7 @@ public class Principle {
         this.id = email;
         this.password = password;
         Role role = new Role();
-        role.setRole_group("known");
+        role.setRole_group("Role");
         role.setUser_role("known");
         this.roles.add(role);
     }

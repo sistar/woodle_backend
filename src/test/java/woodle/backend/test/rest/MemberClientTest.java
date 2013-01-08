@@ -1,6 +1,5 @@
 package woodle.backend.test.rest;
 
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -17,6 +16,7 @@ import woodle.backend.model.Member;
 import woodle.backend.rest.AppointmentResource;
 import woodle.backend.rest.ManagementResource;
 import woodle.backend.rest.MemberResource;
+import woodle.backend.rest.RegisterResource;
 import woodle.backend.util.Resources;
 
 import java.util.List;
@@ -39,9 +39,8 @@ public class MemberClientTest extends RestClientTest {
                 )
 
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml").addClass(Resources.class)
-                .merge(AUTHENTICATION()).merge(PERSISTENCE());
+                .merge(AUTHENTICATION()).merge(PERSISTENCE()).merge(RestClientTest.COMMON());
     }
-
 
     @Test
     @Ignore("Feierabend im Weg")
@@ -57,6 +56,7 @@ public class MemberClientTest extends RestClientTest {
 
     @Test
     public void testPutAppointmentUsingClientProxy() throws Exception {
+        createMember(client(RegisterResource.class), SANTA_CLAUS_NO, "secret");
         resetCreateDefaultUser();
         createAppointment(client(AppointmentResource.class, SANTA_CLAUS_NO, "secret"), SANTA_CLAUS_NO, false);
         List<Appointment> appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret").lookupAppointmentsForMemberEMail(SANTA_CLAUS_NO);

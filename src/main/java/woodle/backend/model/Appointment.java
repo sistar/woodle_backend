@@ -1,15 +1,14 @@
 package woodle.backend.model;
 
-
+import com.google.common.collect.Iterables;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Appointment {
+    public static String DATE_MATCH = "-(?=\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}.*)";
     private String id;
     private String title;
     private String location;
@@ -38,8 +37,6 @@ public class Appointment {
         this.user = user;
         this.maxNumber = maxNumber;
     }
-
-    public static String DATE_MATCH = "-(?=\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}.*)";
 
     public static AppointmentKey createAppointmentKey(String creatorEmail, String title, String startDate) {
         return new AppointmentKey(title, startDate, creatorEmail);
@@ -70,7 +67,6 @@ public class Appointment {
         this.title = title;
     }
 
-
     public String getStartDate() {
         return startDate;
     }
@@ -78,7 +74,6 @@ public class Appointment {
     public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
-
 
     public String getId() {
         return id;
@@ -136,7 +131,6 @@ public class Appointment {
         this.maxNumber = maxNumber;
     }
 
-
     @Override
     public String toString() {
         return "Appointment{" +
@@ -175,45 +169,15 @@ public class Appointment {
     }
 
     public String cancel(String userEmail) {
-        if (email(this.maybeAttendances).contains(userEmail)) {
-            Attendance maybeAttendance = byEmail(userEmail, maybeAttendances);
-            if (maybeAttendance != null) {
-                this.maybeAttendances.remove(maybeAttendance);
-                return "";
-            }
+        Iterables.removeIf(this.maybeAttendances, new WithEmail(userEmail));
+        Iterables.removeIf(this.attendances, new WithEmail(userEmail));
+        if (this.attendances.size() < maxNumber && this.maybeAttendances.size() > 0) {
+            ComparableAttendance first = ((SortedSet<ComparableAttendance>) this.maybeAttendances).first();
+            this.maybeAttendances.remove(first);
+            this.attendances.add(first);
+            return first.getAttendantEmail();
         } else {
-            if (email(this.attendances).contains(userEmail)) {
-                ComparableAttendance attendance = byEmail(userEmail, attendances);
-                if (attendance != null) {
-                    this.attendances.remove(attendance);
-                    if (this.maybeAttendances.size() == 0) {
-                        return "";
-                    }
-                    ComparableAttendance first = ((SortedSet<ComparableAttendance>) this.maybeAttendances).first();
-                    this.maybeAttendances.remove(first);
-                    this.attendances.add(first);
-                    return first.getAttendantEmail();
-                }
-            }
+            return "";
         }
-
-        return "";
-    }
-
-    private ComparableAttendance byEmail(String userEmail, Set<ComparableAttendance> attendances) {
-        for (ComparableAttendance attendance : attendances) {
-            if (attendance.attendantEmail.equals(userEmail)) {
-                return attendance;
-            }
-        }
-        return null;
-    }
-
-    private List<String> email(Set<? extends Attendance> attendances) {
-        ArrayList<String> emailAddresses = new ArrayList<String>();
-        for (Attendance attendance : attendances) {
-            emailAddresses.add(attendance.getAttendantEmail());
-        }
-        return emailAddresses;
     }
 }

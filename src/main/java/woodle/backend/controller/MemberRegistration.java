@@ -18,7 +18,7 @@ public class MemberRegistration {
     private EntityManager em;
 
     public void register(Principle newPrinciple) {
-        log.info("Registering member with E-Mail " + newPrinciple.getId());
+        log.info(String.format("Registering member with E-Mail %s ", newPrinciple.getId(), newPrinciple.getPassword()));
         em.persist(newPrinciple);
     }
 

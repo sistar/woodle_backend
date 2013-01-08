@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-
 @RequestScoped
 public class AppointmentsResourceService implements AppointmentResource {
 
@@ -27,7 +26,6 @@ public class AppointmentsResourceService implements AppointmentResource {
 
     @Inject
     Logger logger;
-
 
     @Override
     public Response.Status create(Appointment appointment) {
@@ -115,12 +113,11 @@ public class AppointmentsResourceService implements AppointmentResource {
                                   @PathParam("startDate") String startDate) {
         AppointmentKey appointmentKey = Appointment.createAppointmentKey(creatorEmail, title, startDate);
 
-
         Appointment appointment = woodleStore.getAppointmentMap().get(appointmentKey);
         if (appointment == null) {
             StringBuilder sb = new StringBuilder();
 
-            sb.append(appointmentKey + " was not found");
+            sb.append(appointmentKey).append(" was not found");
 
             for (AppointmentKey key : woodleStore.getAppointmentMap().keySet()) {
                 sb.append(key.toString());

@@ -26,6 +26,7 @@ public class Resources {
     private EntityManager em;
 
     @Produces
+    @SuppressWarnings("unused")
     public Logger produceLog(InjectionPoint injectionPoint) {
         return Logger.getLogger(injectionPoint.getMember().getDeclaringClass().getName());
     }

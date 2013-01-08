@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
-
 @RequestScoped
 public class MemberResourceService implements MemberResource {
 
@@ -45,7 +44,7 @@ public class MemberResourceService implements MemberResource {
 
     @Override
     public Member lookupMemberById(@PathParam("id") long id) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
@@ -72,6 +71,5 @@ public class MemberResourceService implements MemberResource {
     public List<Appointment> lookupAppointmentsAttendanceConfirmed(@PathParam("email") String eMail) {
         return woodleStore.appointmentsAttendanceConfirmed(eMail);
     }
-
 
 }

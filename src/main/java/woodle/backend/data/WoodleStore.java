@@ -1,11 +1,15 @@
 package woodle.backend.data;
 
+import sun.misc.BASE64Encoder;
 import woodle.backend.controller.MemberRegistration;
 import woodle.backend.entity.Principle;
 import woodle.backend.model.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -15,7 +19,6 @@ public class WoodleStore {
     MemberRegistration memberRegistration;
 
     Logger log = Logger.getLogger(this.getClass().getName());
-
 
     Map<AppointmentKey, Appointment> appointmentMap = new HashMap<AppointmentKey, Appointment>();
     Map<String, Member> memberMap = new HashMap<String, Member>();
@@ -47,8 +50,32 @@ public class WoodleStore {
 
     public void saveMember(Member member) {
         memberMap.put(member.getEmail(), member);
-        memberRegistration.register(new Principle(member.getEmail(), member.getPassword()));
+        try {
+            memberRegistration.register(new Principle(member.getEmail(), sha256Base64((member.getPassword()))));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
 
+    }
+
+    private String sha256Base64(String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        digest.reset();
+        byte[] bytes = digest.digest(password.getBytes("UTF-8"));
+        return byteToBase64(bytes);
+    }
+
+    /**
+     * From a byte[] returns a base 64 representation
+     *
+     * @param data byte[]
+     * @return String
+     */
+    public static String byteToBase64(byte[] data) {
+        BASE64Encoder encoder = new BASE64Encoder();
+        return encoder.encode(data);
     }
 
     public void resetMembers() {
@@ -127,7 +154,6 @@ public class WoodleStore {
         Attendance attendance = new Attendance(attendendEmail, calendarEventId);
         return attend(appointmentKey, attendance);
     }
-
 
     private String attend(AppointmentKey appointmentKey, Attendance attendance) throws UnkownAppointmentException {
         return nullSafeAppointmentForKey(appointmentKey).attend(attendance);
