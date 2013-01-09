@@ -79,6 +79,7 @@ public class WoodleStore {
     }
 
     public void resetMembers() {
+        log.info("RESETTING members");
         memberMap.clear();
     }
 
