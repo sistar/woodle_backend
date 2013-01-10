@@ -3,6 +3,7 @@ package woodle.backend.model;
 import com.google.common.collect.Iterables;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -15,8 +16,8 @@ public class Appointment {
     private String description;
     private String startDate;
     private String endDate;
-    private Set<ComparableAttendance> attendances;
-    private Set<ComparableAttendance> maybeAttendances;
+    private Set<ComparableAttendance> attendances = new HashSet<ComparableAttendance>();
+    private Set<ComparableAttendance> maybeAttendances = new HashSet<ComparableAttendance>();
     private String user;
     private int maxNumber;
 
@@ -32,8 +33,12 @@ public class Appointment {
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.attendances = attendances;
-        this.maybeAttendances = maybeAttendances;
+        if (attendances != null) {
+            this.attendances.addAll(attendances);
+        }
+        if (maybeAttendances != null) {
+            this.maybeAttendances = maybeAttendances;
+        }
         this.user = user;
         this.maxNumber = maxNumber;
     }
