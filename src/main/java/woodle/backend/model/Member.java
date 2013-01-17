@@ -3,16 +3,15 @@ package woodle.backend.model;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class Member implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -29,6 +28,7 @@ public class Member implements Serializable {
     @Email
     private String email;
 
+    private String name;
 
     @NotNull
     @Size(min = 10, max = 12)
@@ -39,10 +39,11 @@ public class Member implements Serializable {
     public Member() {
     }
 
-    public Member(String password, String email, String phoneNumber) {
+    public Member(String password, String email, String phoneNumber, String name) {
         this.password = password;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.name = name;
     }
 
     public Long getId() {
@@ -77,5 +78,22 @@ public class Member implements Serializable {
         this.password = password;
     }
 
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                '}';
+    }
 }

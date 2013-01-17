@@ -1,6 +1,6 @@
 package woodle.backend.rest;
 
-import woodle.backend.controller.MemberRegistration;
+import woodle.backend.controller.MemberRepository;
 import woodle.backend.data.WoodleStore;
 import woodle.backend.model.Member;
 
@@ -21,7 +21,7 @@ public class RegisterResourceService implements RegisterResource {
     private WoodleStore woodleStore;
 
     @Inject
-    private MemberRegistration memberRegistration;
+    private MemberRepository memberRepository;
 
     @Override
     public void createMember(Member member) {
@@ -34,7 +34,7 @@ public class RegisterResourceService implements RegisterResource {
             logger.severe(String.format("allready in store: %s", member.getEmail()));
             throw new WebApplicationException(Response.Status.CONFLICT);
         }
-        if (memberRegistration.hasMember(member.getEmail())) {
+        if (memberRepository.hasMember(member.getEmail())) {
             logger.severe(String.format("allready in registration: %s", member.getEmail()));
             throw new WebApplicationException(Response.Status.CONFLICT);
         }

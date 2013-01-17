@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure>
+    <deployment>
+        <module-alias name="woodleBackendTest"/>
+        <dependencies>
+            <module name="com.google.guava" export="true"/>
+        </dependencies>
+    </deployment>
+</jboss-deployment-structure>

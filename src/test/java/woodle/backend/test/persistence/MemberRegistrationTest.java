@@ -9,7 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import woodle.backend.controller.MemberRegistration;
+import woodle.backend.controller.MemberRepository;
 import woodle.backend.entity.Principle;
 import woodle.backend.test.rest.RestClientTest;
 
@@ -31,7 +31,7 @@ public class MemberRegistrationTest {
     public static final String TOP_SECRET = "topSecret";
     public static final String KNOWN = "known";
     @Inject
-    MemberRegistration memberRegistration;
+    MemberRepository memberRepository;
     @Resource(lookup = "java:jboss/datasources/WoodleDS")
     private javax.sql.DataSource employeeDataSource;
     private Connection connection;
@@ -40,7 +40,7 @@ public class MemberRegistrationTest {
     public static Archive<?> createTestArchive() {
         return ShrinkWrap.create(WebArchive.class, "memberRegistration.war")
                 .addPackage(Principle.class.getPackage())
-                .addPackage(MemberRegistration.class.getPackage())
+                .addPackage(MemberRepository.class.getPackage())
                 .addPackage("woodle.backend.model")
                 .addPackage("woodle.backend.data")
                 .addPackage("woodle.backend.rest")
@@ -56,7 +56,7 @@ public class MemberRegistrationTest {
 
     @Before
     public void setUp() throws Exception {
-        memberRegistration.reset();
+        memberRepository.reset();
 
         this.connection = employeeDataSource.getConnection();
     }
@@ -73,7 +73,7 @@ public class MemberRegistrationTest {
         registerDummyUser();
 
         assertMembersRegistrationEmpty(false);
-        memberRegistration.reset();
+        memberRepository.reset();
         assertMembersRegistrationEmpty(true);
     }
 
@@ -117,7 +117,7 @@ public class MemberRegistrationTest {
 
     private void registerDummyUser() {
         Principle principle = new Principle(JANE_MAILINATOR_COM, TOP_SECRET);
-        memberRegistration.register(principle);
+        memberRepository.register(principle);
     }
 
     private void assertMembersRegistrationEmpty(boolean isEmpty) throws SQLException {

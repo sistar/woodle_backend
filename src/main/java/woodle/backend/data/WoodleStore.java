@@ -1,7 +1,7 @@
 package woodle.backend.data;
 
 import sun.misc.BASE64Encoder;
-import woodle.backend.controller.MemberRegistration;
+import woodle.backend.controller.MemberRepository;
 import woodle.backend.entity.Principle;
 import woodle.backend.model.*;
 
@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class WoodleStore {
     @Inject
-    MemberRegistration memberRegistration;
+    MemberRepository memberRepository;
 
     Logger log = Logger.getLogger(this.getClass().getName());
 
@@ -51,7 +51,7 @@ public class WoodleStore {
     public void saveMember(Member member) {
         memberMap.put(member.getEmail(), member);
         try {
-            memberRegistration.register(new Principle(member.getEmail(), sha256Base64((member.getPassword()))));
+            memberRepository.register(new Principle(member.getEmail(), sha256Base64((member.getPassword()))));
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         } catch (UnsupportedEncodingException e) {
@@ -60,7 +60,7 @@ public class WoodleStore {
 
     }
 
-    private String sha256Base64(String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public static String sha256Base64(String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         digest.reset();
         byte[] bytes = digest.digest(password.getBytes("UTF-8"));

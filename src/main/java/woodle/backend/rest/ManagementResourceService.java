@@ -1,11 +1,9 @@
 package woodle.backend.rest;
 
-
-import woodle.backend.controller.MemberRegistration;
+import woodle.backend.controller.MemberRepository;
 import woodle.backend.data.WoodleStore;
 
 import javax.inject.Inject;
-
 
 public class ManagementResourceService implements ManagementResource {
 
@@ -13,10 +11,10 @@ public class ManagementResourceService implements ManagementResource {
     private WoodleStore woodleStore;
 
     @Inject
-    private MemberRegistration memberRegistration;
+    private MemberRepository memberRepository;
 
     public void reset() {
-        memberRegistration.reset();
+        memberRepository.reset();
         woodleStore.resetMembers();
         woodleStore.resetAppointments();
     }

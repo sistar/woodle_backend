@@ -1,5 +1,7 @@
 package woodle.backend.entity;
 
+import woodle.backend.model.Member;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -9,6 +11,9 @@ import java.util.Set;
 public class Principle {
 
     private String id;
+    private Set<Role> roles = new HashSet<Role>();
+    private String password;
+    private boolean rememberMe;
 
     public Principle() {
 
@@ -17,17 +22,29 @@ public class Principle {
     public Principle(String email, String password) {
         this.id = email;
         this.password = password;
+        addKnownRole();
+    }
+
+    public Principle(Member newMember) {
+        this.id = newMember.getEmail();
+        this.password = newMember.getPassword();
+        addKnownRole();
+    }
+
+    public boolean isRememberMe() {
+        return rememberMe;
+    }
+
+    public void setRememberMe(boolean rememberMe) {
+        this.rememberMe = rememberMe;
+    }
+
+    private void addKnownRole() {
         Role role = new Role();
         role.setRole_group("Role");
         role.setUser_role("known");
         this.roles.add(role);
     }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    private Set<Role> roles = new HashSet<Role>();
 
     @Id
     @Column(name = "PRINCIPAL_ID")
@@ -47,8 +64,6 @@ public class Principle {
         this.password = password;
     }
 
-    private String password;
-
     @ElementCollection
     @CollectionTable(
             name = "ROLES",
@@ -56,5 +71,19 @@ public class Principle {
     )
     public Set<Role> getRoles() {
         return this.roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    @Override
+    public String toString() {
+        return "Principle{" +
+                "id='" + id + '\'' +
+                ", roles=" + roles +
+                ", password='" + password + '\'' +
+                ", rememberMe=" + rememberMe +
+                '}';
     }
 }

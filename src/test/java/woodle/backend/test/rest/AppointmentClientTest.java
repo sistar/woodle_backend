@@ -1,6 +1,5 @@
 package woodle.backend.test.rest;
 
-
 import com.google.common.collect.Sets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -28,11 +27,9 @@ import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.Assert.assertThat;
 
-
 @RunWith(Arquillian.class)
 @RunAsClient
 public class AppointmentClientTest extends RestClientTest {
-
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
@@ -90,10 +87,8 @@ public class AppointmentClientTest extends RestClientTest {
                 waiting,
                 SANTA_CLAUS_NO, 2);
 
-
         AppointmentResource appointmentResource = client(AppointmentResource.class, SANTA_CLAUS_NO, "secret");
         appointmentResource.create(appointmentIDoNotAttend);
-
 
         List<Appointment> appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret")
                 .lookupAppointmentsAttendance(SANTA_CLAUS_NO);
@@ -109,9 +104,7 @@ public class AppointmentClientTest extends RestClientTest {
             assertThat(attendance.getCalendarEventId(), notNullValue());
         }
 
-
     }
-
 
     @Test
     public void testDeleteAppointment() throws Exception {
@@ -155,12 +148,11 @@ public class AppointmentClientTest extends RestClientTest {
         String attend = client(AppointmentResource.class, SANTA_CLAUS_NO, "secret").cancel(soleAppointment().getId(), soleAppointment().getUser());
         assertThat(soleAppointment().getAttendances().size(), is(equalTo(2)));
         assertThat(attend, is(equalTo(RUPERT_NORTH_POLE)));
-        client(RegisterResource.class).createMember(new Member("secret", RUPERT_NORTH_POLE, "007007007"));
+        client(RegisterResource.class).createMember(new Member("secret", RUPERT_NORTH_POLE, "007007007", "Rupert"));
         attend = client(AppointmentResource.class, RUPERT_NORTH_POLE, "secret").cancel(soleAppointment().getId(), soleAppointment().getUser());
         assertThat(soleAppointment().getAttendances().size(), is(equalTo(1)));
         assertThat(attend, is(equalTo("")));
     }
-
 
     @Test
     public void testLookupAppointmentById() throws Exception {

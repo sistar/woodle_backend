@@ -9,7 +9,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import woodle.backend.controller.MemberRegistration;
+import woodle.backend.controller.MemberRepository;
 import woodle.backend.data.WoodleStore;
 import woodle.backend.model.Appointment;
 import woodle.backend.model.Member;
@@ -35,7 +35,7 @@ public class MemberClientTest extends RestClientTest {
         return ShrinkWrap.create(WebArchive.class, "test.war")
                 .addPackage("woodle.backend.model")
                 .addPackage("woodle.backend.rest")
-                .addClasses(MemberRegistration.class, WoodleStore.class
+                .addClasses(MemberRepository.class, WoodleStore.class
                 )
 
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml").addClass(Resources.class)
@@ -47,7 +47,7 @@ public class MemberClientTest extends RestClientTest {
     public void modifyAMember() {
         resetCreateDefaultUser();
 
-        client(MemberResource.class, SANTA_CLAUS_NO, "secret").modifyMember(new Member(NOT_SO_SECRET, SANTA_CLAUS_NO, "81955840"), SANTA_CLAUS_NO);
+        client(MemberResource.class, SANTA_CLAUS_NO, "secret").modifyMember(new Member(NOT_SO_SECRET, SANTA_CLAUS_NO, "81955840", "Santa"), SANTA_CLAUS_NO);
 
         assertThat(client(MemberResource.class, SANTA_CLAUS_NO, "secret").listAllMembers().size(), is(equalTo(1)));
         Member member = client(MemberResource.class, SANTA_CLAUS_NO, "secret").lookupMemberByEmail(SANTA_CLAUS_NO);

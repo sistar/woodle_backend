@@ -12,7 +12,7 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import woodle.backend.controller.MemberRegistration;
+import woodle.backend.controller.MemberRepository;
 import woodle.backend.entity.Role;
 import woodle.backend.model.Appointment;
 import woodle.backend.model.ComparableAttendance;
@@ -64,7 +64,7 @@ public class RestClientTest {
                 addPackage(Role.class.getPackage())
                 .addAsResource("META-INF/persistence.xml")
                 .addAsResource("import.sql")
-                .addPackage(MemberRegistration.class.getPackage()
+                .addPackage(MemberRepository.class.getPackage()
                 );
     }
 
