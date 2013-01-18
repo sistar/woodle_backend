@@ -5,30 +5,38 @@ import woodle.backend.model.Member;
 import woodle.backend.service.MemberRegistration;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Model;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
+import java.util.logging.Logger;
 
-// The @Model stereotype is a convenience mechanism to make this a request-scoped bean that has an
-// EL name
-// Read more about the @Model stereotype in this FAQ:
-// http://sfwk.org/Documentation/WhatIsThePurposeOfTheModelAnnotation
-@Model
-public class MemberController {
+@Named
+@SessionScoped
+public class MemberController implements Serializable {
 
     @Inject
     private FacesContext facesContext;
-
     @Inject
     private MemberRegistration memberRegistration;
-
+    @Inject
+    Logger logger;
     @Produces
     @Named
     private Member newMember;
-
+    @Produces
+    @Named
+    private String username;
+    @Produces
+    @Named
+    private String searchEnabled = "disabled";
+    @Produces
+    @Named
+    private boolean searchEnabledJsf = false;
     @Produces
     @Named
     private Principle principle;
@@ -37,6 +45,9 @@ public class MemberController {
     public void initNewMember() {
         newMember = new Member();
         principle = new Principle();
+        searchEnabled = "disabled";
+        searchEnabledJsf = false;
+        username = "";
     }
 
     public void register() throws Exception {
@@ -52,16 +63,27 @@ public class MemberController {
         }
     }
 
-    public void login() throws Exception {
+    public String login() throws Exception {
         try {
-            memberRegistration.login(principle);
+            logger.info(String.format("LOGGING USER IN"));
+            HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+            request.login(principle.getId(), principle.getPassword());
+
             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, "Logged in!", "Login successful");
             facesContext.addMessage(null, m);
-            initNewMember();
+            //initNewMember();
+            searchEnabled = "active";
+            searchEnabledJsf = true;
+            username = principle.getId();
+            logger.info(String.format("LOG IN COMPLETE FOR %s", username));
+            return "main";
         } catch (Exception e) {
+
             String errorMessage = getRootErrorMessage(e);
+            logger.info(String.format("LOG IN FAILED [USER %s, PW %s] %s", principle.getId(), principle.getPassword(), e.getMessage()));
             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, "Login unsuccessful");
             facesContext.addMessage(null, m);
+            return "index";
         }
     }
 

@@ -3,9 +3,9 @@
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets">
 <h:head>
-    <title>kitchensink</title>
+    <title>Woodle</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <h:outputStylesheet name="css/bootstrap.min.css"/>
+    <h:outputStylesheet name="css/bootstrap.css"/>
     <h:outputStylesheet name="css/DT_bootstrap.css"/>
     <style type="text/css">
         body {
@@ -17,7 +17,7 @@
         .form-signin {
             max-width: 300px;
             padding: 19px 29px 29px;
-            margin: 0 auto 20px;
+            margin: 60px auto 20px;
             background-color: #fff;
             border: 1px solid #e5e5e5;
             -webkit-border-radius: 5px;
@@ -41,18 +41,16 @@
             padding: 7px 9px;
         }
 
+
     </style>
 </h:head>
 <h:body>
-    <div id="container">
-        <div class="dualbrand">
-            <img src="resources/gfx/dualbrand_logo.png"/>
-        </div>
-        <div id="content">
-            <ui:insert name="content">
-                [Template content will be inserted here]
-            </ui:insert>
-        </div>
+    <div id="container" class="container">
+
+        <ui:insert name="content">
+            [Template content will be inserted here]
+        </ui:insert>
+
         <div class="navbar navbar-inverse navbar-fixed-top" id="aside">
             <div class="navbar-inner">
                 <div class="container-fluid">
@@ -64,24 +62,39 @@
                     <a class="brand" href="#">Woodle</a>
 
                     <div class="nav-collapse collapse">
-                        <p class="navbar-text pull-right">
-                            Logged in as <a href="#" class="navbar-link">Username</a>
-                        </p>
+                        <h:panelGroup rendered="#{searchEnabledJsf}">
+                            <div class="navbar-text pull-right">
+                                <div>Logged in as <a href="#"
+                                                     class="navbar-link">#{username}</a>
+                                </div>
+
+                            </div>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{!searchEnabledJsf}">
+                            <p class="navbar-text pull-right">You must log in to use Woodle!</p>
+                        </h:panelGroup>
+
                         <ul class="nav">
-                            <li class="active"><a href="#">Home</a></li>
+                            <li><h:link rendered="#{searchEnabledJsf}" id="search-link"
+                                        outcome="search.jsf">Search</h:link></li>
                             <li><a href="#about">About</a></li>
                             <li><a href="#contact">Contact</a></li>
+                            <li><h:link rendered="#{searchEnabledJsf}" id="logout-link"
+                                        outcome="logout.jsf">Logout</h:link></li>
+                            <li></li>
                         </ul>
                     </div>
                     <!--/.nav-collapse -->
                 </div>
             </div>
         </div>
-        <div id="footer">
-            <p>
-                Woodle copyright 2012<br/>
-            </p>
-        </div>
+        <footer class="footer">
+            <div class="container">
+                <p>Designed and built with
+                    Woodle copyright 2012<br/>
+                </p>
+            </div>
+        </footer>
     </div>
     <h:outputScript name="js/jquery-1.9.0.min.js"/>
     <h:outputScript name="js/bootstrap.min.js"/>

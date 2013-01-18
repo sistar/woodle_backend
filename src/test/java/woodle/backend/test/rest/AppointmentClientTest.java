@@ -11,7 +11,6 @@ import org.junit.runner.RunWith;
 import woodle.backend.data.WoodleStore;
 import woodle.backend.model.Appointment;
 import woodle.backend.model.Attendance;
-import woodle.backend.model.ComparableAttendance;
 import woodle.backend.model.Member;
 import woodle.backend.rest.AppointmentResource;
 import woodle.backend.rest.MemberResource;
@@ -60,7 +59,7 @@ public class AppointmentClientTest extends RestClientTest {
                 .lookupAppointmentsForMemberEMail(SANTA_CLAUS_NO);
         Appointment appointment = appointments.iterator().next();
         assertThat(appointment.getStartDate(), is(equalTo(APPOINTMENT_DATE)));
-        ComparableAttendance attendance = appointment.getAttendances().iterator().next();
+        Attendance attendance = appointment.getAttendances().iterator().next();
         Long timeOfEntry = attendance.getTimeOfEntry();
         assertThat(timeOfEntry, notNullValue());
         assertThat(timeOfEntry, is(greaterThan(beforeSubmission)));
@@ -73,8 +72,8 @@ public class AppointmentClientTest extends RestClientTest {
 
         resetCreateDefaultUser();
 
-        HashSet<ComparableAttendance> attendances = Sets.newHashSet();
-        HashSet<ComparableAttendance> waiting = Sets.newHashSet();
+        HashSet<Attendance> attendances = Sets.newHashSet();
+        HashSet<Attendance> waiting = Sets.newHashSet();
 
         Appointment appointmentIDoNotAttend = new Appointment(
                 APPOINTMENT_ID,
@@ -100,7 +99,7 @@ public class AppointmentClientTest extends RestClientTest {
         appointments = client(MemberResource.class, SANTA_CLAUS_NO, "secret")
                 .lookupAppointmentsAttendance(SANTA_CLAUS_NO);
         assertThat(appointments.size(), is(1));
-        for (ComparableAttendance attendance : appointments.get(0).getAttendances()) {
+        for (Attendance attendance : appointments.get(0).getAttendances()) {
             assertThat(attendance.getCalendarEventId(), notNullValue());
         }
 

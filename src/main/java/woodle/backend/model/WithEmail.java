@@ -4,7 +4,7 @@ import com.google.common.base.Predicate;
 
 import javax.annotation.Nullable;
 
-public class WithEmail implements Predicate<ComparableAttendance> {
+public class WithEmail implements Predicate<Attendance> {
     final private String eMail;
 
     public WithEmail(String eMail) {
@@ -12,7 +12,7 @@ public class WithEmail implements Predicate<ComparableAttendance> {
     }
 
     @Override
-    public boolean apply(@Nullable ComparableAttendance o) {
+    public boolean apply(@Nullable Attendance o) {
         return o.getAttendantEmail().equalsIgnoreCase(eMail);
     }
 }

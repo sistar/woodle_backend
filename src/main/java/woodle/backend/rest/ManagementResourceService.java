@@ -1,6 +1,6 @@
 package woodle.backend.rest;
 
-import woodle.backend.controller.MemberRepository;
+import woodle.backend.data.MemberRepository;
 import woodle.backend.data.WoodleStore;
 
 import javax.inject.Inject;

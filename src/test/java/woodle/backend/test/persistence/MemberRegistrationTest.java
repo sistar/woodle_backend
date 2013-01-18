@@ -9,8 +9,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import woodle.backend.controller.MemberRepository;
+import woodle.backend.data.MemberRepository;
 import woodle.backend.entity.Principle;
+import woodle.backend.model.Member;
 import woodle.backend.test.rest.RestClientTest;
 
 import javax.annotation.Resource;
@@ -82,7 +83,7 @@ public class MemberRegistrationTest {
 
         registerDummyUser();
 
-        PreparedStatement preparedStatement1 = connection.prepareStatement("select PRINCIPAL_ID, password from  PRINCIPLES");
+        PreparedStatement preparedStatement1 = connection.prepareStatement("SELECT PRINCIPAL_ID, password FROM  PRINCIPLES");
         ResultSet resultSet1 = preparedStatement1.executeQuery();
         boolean next = resultSet1.next();
 
@@ -98,7 +99,7 @@ public class MemberRegistrationTest {
         registerDummyUser();
         assertRows("ROLES", 1);
 
-        PreparedStatement preparedStatement1 = connection.prepareStatement("select  principal_id,user_role ,role_group from  ROLES");
+        PreparedStatement preparedStatement1 = connection.prepareStatement("SELECT  principal_id,user_role ,role_group FROM  ROLES");
         ResultSet resultSet1 = preparedStatement1.executeQuery();
         resultSet1.next();
 
@@ -116,14 +117,15 @@ public class MemberRegistrationTest {
     }
 
     private void registerDummyUser() {
-        Principle principle = new Principle(JANE_MAILINATOR_COM, TOP_SECRET);
-        memberRepository.register(principle);
+
+        Member member = new Member(TOP_SECRET, JANE_MAILINATOR_COM, "1234556778", "Jane");
+        memberRepository.register(member);
     }
 
     private void assertMembersRegistrationEmpty(boolean isEmpty) throws SQLException {
         boolean expectNext = !isEmpty;
 
-        PreparedStatement preparedStatement1 = connection.prepareStatement("select password from  PRINCIPLES");
+        PreparedStatement preparedStatement1 = connection.prepareStatement("SELECT password FROM  PRINCIPLES");
         ResultSet resultSet1 = preparedStatement1.executeQuery();
         boolean hasNext = resultSet1.next();
         assertThat(hasNext, is(expectNext));

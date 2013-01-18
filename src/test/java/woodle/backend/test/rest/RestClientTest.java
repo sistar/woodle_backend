@@ -12,10 +12,10 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import woodle.backend.controller.MemberRepository;
+import woodle.backend.data.MemberRepository;
 import woodle.backend.entity.Role;
 import woodle.backend.model.Appointment;
-import woodle.backend.model.ComparableAttendance;
+import woodle.backend.model.Attendance;
 import woodle.backend.model.Member;
 import woodle.backend.rest.AppointmentResource;
 import woodle.backend.rest.JaxRsActivator;
@@ -111,8 +111,8 @@ public class RestClientTest {
     }
 
     public Appointment createAppointment(AppointmentResource appointmentClient, String userEmail, boolean sendTimeOfEntry) {
-        ComparableAttendance cal1234 = new ComparableAttendance(SANTA_CLAUS_NO, "CAL1234");
-        ComparableAttendance cal666 = new ComparableAttendance("rupert@north.pole", "CAL666");
+        Attendance cal1234 = new Attendance(SANTA_CLAUS_NO, "CAL1234");
+        Attendance cal666 = new Attendance("rupert@north.pole", "CAL666");
         if (!sendTimeOfEntry) {
             cal1234.setTimeOfEntry(null);
             cal666.setTimeOfEntry(null);
@@ -125,8 +125,8 @@ public class RestClientTest {
                 "icy JSON stuff",
                 APPOINTMENT_DATE,
                 APPOINTMENT_DATE,
-                new HashSet<ComparableAttendance>(Arrays.asList(cal1234)),
-                new HashSet<ComparableAttendance>(Arrays.asList(cal666)),
+                new HashSet<Attendance>(Arrays.asList(cal1234)),
+                new HashSet<Attendance>(Arrays.asList(cal666)),
                 userEmail, 2);
         //store appointment to woodle backend
         appointmentClient.create(appointment);

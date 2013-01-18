@@ -17,7 +17,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import woodle.backend.auth.AuthServlet;
-import woodle.backend.controller.MemberRepository;
+import woodle.backend.data.MemberRepository;
 import woodle.backend.entity.Principle;
 import woodle.backend.entity.Role;
 import woodle.backend.model.Member;
@@ -34,6 +34,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Arquillian.class)
 @RunAsClient
 public class ServletTest {
+
     @ArquillianResource
     URL deploymentUrl;
 
@@ -48,15 +49,15 @@ public class ServletTest {
                 .addAsWebInfResource(new File(RestClientTest.SRC_MAIN_WEBAPP_WEB_INF + "/faces-config.xml"))
                 .addAsWebInfResource("jboss-deployment-structure-test.xml", "jboss-deployment-structure.xml")
                 .addAsWebInfResource(new File(RestClientTest.SRC_MAIN_WEBAPP_WEB_INF + "/jboss-web.xml"));
-        System.out.println(webArchive.toString(true));
+        //System.out.println(webArchive.toString(true));
         return webArchive;
 
     }
 
     @Test
     public void shouldBeAbleToInvokeServletInDeployedWebApp() throws Exception {
-        DefaultHttpClient httpclient = new DefaultHttpClient();
-        String requestUrl = deploymentUrl + AuthServlet.URL_PATTERN.substring(1); //+ "?" + AuthServlet.USER_PARAM + "=hello";
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        String requestUrl = deploymentUrl + AuthServlet.URL_PATTERN.substring(1);
         // We should now login with the user name and password
         HttpPost httpost = new HttpPost(requestUrl);
 
@@ -66,7 +67,7 @@ public class ServletTest {
 
         httpost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
 
-        HttpResponse response = httpclient.execute(httpost);
+        HttpResponse response = httpClient.execute(httpost);
         HttpEntity entity = response.getEntity();
         if (entity != null)
             entity.consumeContent();

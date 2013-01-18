@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/WEB-INF/templates/default.xhtml">
+    <ui:define name="content">
+        <div class="row">
+
+            <div class="span12">
+                <h:form id="register" class="form-signin">
+                    <h3>Member Registration</h3>
+                    <h:panelGrid columns="3" columnClasses="titleCell">
+                        <h:outputLabel for="name" value="Name:"/>
+                        <h:inputText id="name" value="#{newMember.name}"/>
+                        <h:message for="name" errorClass="invalid"/>
+
+                        <h:outputLabel for="email" value="Email:"/>
+                        <h:inputText id="email" value="#{newMember.email}"/>
+                        <h:message for="email" errorClass="invalid"/>
+
+                        <h:outputLabel for="phoneNumber" value="Phone #:"/>
+                        <h:inputText id="phoneNumber"
+                                     value="#{newMember.phoneNumber}"/>
+                        <h:message for="phoneNumber" errorClass="invalid"/>
+
+                        <h:outputLabel for="password" value="Password:"/>
+                        <h:inputText id="password" value="#{newMember.password}"/>
+                        <h:message for="password" errorClass="invalid"/>
+                    </h:panelGrid>
+
+                    <p>
+                        <h:panelGrid columns="2">
+                            <h:commandButton id="register"
+                                             action="#{memberController.register}"
+                                             value="Register" class="btn btn-large btn-primary"/>
+                            <h:messages styleClass="messages"
+                                        errorClass="invalid" infoClass="valid"
+                                        warnClass="warning" globalOnly="true"/>
+                        </h:panelGrid>
+                    </p>
+
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

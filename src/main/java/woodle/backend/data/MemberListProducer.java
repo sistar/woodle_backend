@@ -1,6 +1,5 @@
 package woodle.backend.data;
 
-import woodle.backend.controller.MemberRepository;
 import woodle.backend.model.Member;
 
 import javax.annotation.PostConstruct;

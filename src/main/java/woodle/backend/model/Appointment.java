@@ -3,21 +3,35 @@ package woodle.backend.model;
 import com.google.common.collect.Iterables;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 
+@Entity
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Appointment {
     public static String DATE_MATCH = "-(?=\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}.*)";
+    @Id
     private String id;
     private String title;
     private String location;
     private String description;
     private String startDate;
     private String endDate;
-    private Set<ComparableAttendance> attendances = new HashSet<ComparableAttendance>();
-    private Set<ComparableAttendance> maybeAttendances = new HashSet<ComparableAttendance>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "ATTD",
+            joinColumns = @JoinColumn(name = "APPOINTMENT_ID")
+    )
+
+    private Set<Attendance> attendances = new HashSet<Attendance>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "MAYBE_ATTD",
+            joinColumns = @JoinColumn(name = "APPOINTMENT_ID")
+    )
+    private Set<Attendance> maybeAttendances = new HashSet<Attendance>();
     private String user;
     private int maxNumber;
 
@@ -26,7 +40,7 @@ public class Appointment {
 
     public Appointment(String id, String title, String location, String description,
                        String startDate, String endDate,
-                       Set<ComparableAttendance> attendances, Set<ComparableAttendance> maybeAttendances, String user, int maxNumber) {
+                       Set<Attendance> attendances, Set<Attendance> maybeAttendances, String user, int maxNumber) {
         this.id = id;
         this.title = title;
         this.location = location;
@@ -112,19 +126,19 @@ public class Appointment {
         this.endDate = endDate;
     }
 
-    public Set<ComparableAttendance> getAttendances() {
+    public Set<Attendance> getAttendances() {
         return attendances;
     }
 
-    public void setAttendances(SortedSet<ComparableAttendance> attendances) {
+    public void setAttendances(SortedSet<Attendance> attendances) {
         this.attendances = attendances;
     }
 
-    public Set<ComparableAttendance> getMaybeAttendances() {
+    public Set<Attendance> getMaybeAttendances() {
         return maybeAttendances;
     }
 
-    public void setMaybeAttendances(SortedSet<ComparableAttendance> maybeAttendances) {
+    public void setMaybeAttendances(SortedSet<Attendance> maybeAttendances) {
         this.maybeAttendances = maybeAttendances;
     }
 
@@ -155,19 +169,18 @@ public class Appointment {
     public String attend(Attendance attendance) {
         if (hasMember(attendance.getAttendantEmail(), this.maybeAttendances)) return "waiting";
         if (hasMember(attendance.getAttendantEmail(), this.attendances)) return "confirmed";
-        ComparableAttendance comparableAttendance = new ComparableAttendance(attendance);
 
         if (this.attendances.size() < maxNumber) {
-            this.attendances.add(comparableAttendance);
+            this.attendances.add(attendance);
             return "confirmed";
         } else {
-            this.maybeAttendances.add(comparableAttendance);
+            this.maybeAttendances.add(attendance);
             return "waiting";
         }
     }
 
-    private boolean hasMember(String attendantEmail, Set<ComparableAttendance> comparableAttendances) {
-        for (ComparableAttendance attendance : comparableAttendances) {
+    private boolean hasMember(String attendantEmail, Set<Attendance> Attendances) {
+        for (Attendance attendance : Attendances) {
             if (attendance.getAttendantEmail().equals(attendantEmail)) return true;
         }
         return false;
@@ -177,7 +190,7 @@ public class Appointment {
         Iterables.removeIf(this.maybeAttendances, new WithEmail(userEmail));
         Iterables.removeIf(this.attendances, new WithEmail(userEmail));
         if (this.attendances.size() < maxNumber && this.maybeAttendances.size() > 0) {
-            ComparableAttendance first = ((SortedSet<ComparableAttendance>) this.maybeAttendances).first();
+            Attendance first = ((SortedSet<Attendance>) this.maybeAttendances).first();
             this.maybeAttendances.remove(first);
             this.attendances.add(first);
             return first.getAttendantEmail();

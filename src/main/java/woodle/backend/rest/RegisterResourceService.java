@@ -1,6 +1,6 @@
 package woodle.backend.rest;
 
-import woodle.backend.controller.MemberRepository;
+import woodle.backend.data.MemberRepository;
 import woodle.backend.data.WoodleStore;
 import woodle.backend.model.Member;
 
@@ -30,11 +30,11 @@ public class RegisterResourceService implements RegisterResource {
             logger.severe("email must not be null or empty");
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
-        if (woodleStore.hasMember(member.getEmail())) {
+        if (memberRepository.existsMember(member.getEmail())) {
             logger.severe(String.format("allready in store: %s", member.getEmail()));
             throw new WebApplicationException(Response.Status.CONFLICT);
         }
-        if (memberRepository.hasMember(member.getEmail())) {
+        if (memberRepository.existsPrinciple(member.getEmail())) {
             logger.severe(String.format("allready in registration: %s", member.getEmail()));
             throw new WebApplicationException(Response.Status.CONFLICT);
         }

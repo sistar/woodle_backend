@@ -9,7 +9,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import woodle.backend.controller.MemberRepository;
+import woodle.backend.data.MemberRepository;
 import woodle.backend.data.WoodleStore;
 import woodle.backend.model.Appointment;
 import woodle.backend.model.Member;

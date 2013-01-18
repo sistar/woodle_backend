@@ -1,8 +1,6 @@
 package woodle.backend.data;
 
 import sun.misc.BASE64Encoder;
-import woodle.backend.controller.MemberRepository;
-import woodle.backend.entity.Principle;
 import woodle.backend.model.*;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -10,55 +8,21 @@ import javax.inject.Inject;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 @ApplicationScoped
 public class WoodleStore {
+
     @Inject
     MemberRepository memberRepository;
-
-    Logger log = Logger.getLogger(this.getClass().getName());
-
-    Map<AppointmentKey, Appointment> appointmentMap = new HashMap<AppointmentKey, Appointment>();
-    Map<String, Member> memberMap = new HashMap<String, Member>();
-
-    public Map<AppointmentKey, Appointment> getAppointmentMap() {
-        return appointmentMap;
-    }
-
-    public List<Appointment> appointmentsForUser(String eMail) {
-        List<Appointment> res = new ArrayList<Appointment>();
-        for (AppointmentKey k : appointmentMap.keySet()) {
-            if (k.getCreatorEmail().equals(eMail)) {
-                res.add(appointmentMap.get(k));
-            }
-        }
-        return res;
-    }
-
-    public void saveAppointment(Appointment appointment) throws UnkownMemberException {
-        if (!memberMap.containsKey(appointment.getUser())) throw new UnkownMemberException(appointment.getUser());
-        log.info("APPOINTMENT MAP SIZE BEFORE:" + appointmentMap.size());
-        appointmentMap.put(appointment.createAppointmentKey(), appointment);
-        log.info("APPOINTMENT MAP SIZE AFTER:" + appointmentMap.size());
-    }
-
-    public boolean hasMember(String eMail) {
-        return memberMap.containsKey(eMail);
-    }
-
-    public void saveMember(Member member) {
-        memberMap.put(member.getEmail(), member);
-        try {
-            memberRepository.register(new Principle(member.getEmail(), sha256Base64((member.getPassword()))));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
+    @Inject
+    AppointmentRepository appointmentRepository;
+    @Inject
+    Logger log;
 
     public static String sha256Base64(String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -78,30 +42,47 @@ public class WoodleStore {
         return encoder.encode(data);
     }
 
+    public Map<AppointmentKey, Appointment> getAppointmentMap() {
+        return appointmentRepository.appointmentMap();
+    }
+
+    public List<Appointment> appointmentsForUser(String eMail) {
+        return appointmentRepository.appointmentsForUser(eMail);
+
+    }
+
+    public void saveAppointment(Appointment appointment) throws UnkownMemberException {
+
+        if (!memberRepository.existsMember(appointment.getUser()))
+            throw new UnkownMemberException(appointment.getUser());
+
+        appointmentRepository.store(appointment.createAppointmentKey(), appointment);
+
+    }
+
+    public void saveMember(Member member) {
+        memberRepository.register(member);
+    }
+
     public void resetMembers() {
         log.info("RESETTING members");
-        memberMap.clear();
+        memberRepository.reset();
     }
 
     public Collection<Member> getMembers() {
-        return memberMap.values();
+        return memberRepository.findAllOrderedByName();
     }
 
     public Member getMember(String email) {
-        return memberMap.get(email);
+        return memberRepository.lookupMember(email);
     }
 
     public List<Appointment> appointmentsAttendance(String eMail) {
-        List<Appointment> res = new ArrayList<Appointment>();
-        for (Appointment a : appointmentMap.values()) {
-            if (emails(a.getAttendances()).contains(eMail) || emails(a.getMaybeAttendances()).contains(eMail)) {
-                res.add(a);
-            }
-        }
-        return res;
+        return appointmentRepository.appointmentsAttendanceOrMaybeAttendance(eMail);
+
     }
 
-    private List<String> emails(Collection<ComparableAttendance> attendances) {
+    private List<String> emails(Collection<Attendance> attendances) {
         ArrayList<String> res = new ArrayList<String>();
         for (Attendance attendance : attendances) {
             res.add(attendance.getAttendantEmail());
@@ -110,38 +91,17 @@ public class WoodleStore {
     }
 
     public List<Appointment> appointmentsAttendanceWaiting(String eMail) {
-        List<Appointment> res = new ArrayList<Appointment>();
-        for (Appointment a : appointmentMap.values()) {
-            if (emails(a.getMaybeAttendances()).contains(eMail)) {
-                res.add(a);
-            }
-        }
-        return res;
+        return appointmentRepository.appointmentsMaybeAttendance(eMail);
     }
 
     public List<Appointment> appointmentsAttendanceConfirmed(String eMail) {
-        List<Appointment> res = new ArrayList<Appointment>();
-        for (Appointment a : appointmentMap.values()) {
-            if (emails(a.getAttendances()).contains(eMail)) {
-                res.add(a);
-            }
-        }
-        return res;
-    }
-
-    public Appointment lookUpAppointment(Appointment appointment) {
-        return appointmentMap.get(appointment.createAppointmentKey());
-    }
-
-    public String attend(String creatorEmail, String title, String startDate,
-                         Attendance attendance) throws UnkownAppointmentException {
-        AppointmentKey appointmentKey = Appointment.createAppointmentKey(creatorEmail, title, startDate);
-        return attend(appointmentKey, attendance);
+        return appointmentRepository.appointmentsAttendanceConfirmed(eMail);
     }
 
     public String attend(String creatorEmail,
                          String appointmentId,
                          Attendance attendance) throws UnkownAppointmentException {
+        appointmentRepository.appointmentForId(creatorEmail, appointmentId);
         AppointmentKey appointmentKey = Appointment.createAppointmentKey(creatorEmail, appointmentId);
         return attend(appointmentKey, attendance);
     }
@@ -157,32 +117,20 @@ public class WoodleStore {
     }
 
     private String attend(AppointmentKey appointmentKey, Attendance attendance) throws UnkownAppointmentException {
-        return nullSafeAppointmentForKey(appointmentKey).attend(attendance);
-    }
-
-    @Deprecated
-    private Appointment nullSafeAppointmentForAppointmentId(String creatorEmail,
-                                                            String appointmentId) throws UnkownAppointmentException {
-
-        AppointmentKey appointmentKey = Appointment.createAppointmentKey(creatorEmail, appointmentId);
-        Appointment appointment = appointmentMap.get(appointmentKey);
-        if (appointment == null) {
-            throw new UnkownAppointmentException(appointmentKey.getId());
-        }
-        return appointment;
+        return appointmentRepository.appointmentForKey(appointmentKey).attend(attendance);
     }
 
     @Deprecated
     public String cancel(String appointmentId,
                          String creatorEmail,
                          String userEmail) throws UnkownAppointmentException {
-        return nullSafeAppointmentForAppointmentId(creatorEmail, appointmentId).cancel(userEmail);
+        return appointmentRepository.appointmentForId(creatorEmail, appointmentId).cancel(userEmail);
 
     }
 
     public String cancel(AppointmentKey appointmentKey,
                          String attendantEmail) throws UnkownAppointmentException {
-        return nullSafeAppointmentForKey(appointmentKey).cancel(attendantEmail);
+        return appointmentRepository.appointmentForKey(appointmentKey).cancel(attendantEmail);
     }
 
     @Deprecated
@@ -191,18 +139,11 @@ public class WoodleStore {
     }
 
     public void deleteAppointment(AppointmentKey appointmentKey) {
-        appointmentMap.remove(appointmentKey);
+        appointmentRepository.delete(appointmentKey);
     }
 
     public void resetAppointments() {
-        appointmentMap.clear();
+        appointmentRepository.delete();
     }
 
-    private Appointment nullSafeAppointmentForKey(AppointmentKey appointmentKey) throws UnkownAppointmentException {
-        Appointment appointment = appointmentMap.get(appointmentKey);
-        if (appointment == null) {
-            throw new UnkownAppointmentException(appointmentKey.getId());
-        }
-        return appointment;
-    }
 }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/WEB-INF/templates/default.xhtml">
+    <ui:define name="content">
+        <div class="well">
+            <h2>Appointments</h2>
+            <br/>
+            <h:panelGroup rendered="#{empty appointments}">
+                <em>No appointments.</em>
+            </h:panelGroup>
+            <h:dataTable id="dataTable" var="_appointement" value="#{appointments}"
+                         rendered="#{not empty appointments}"
+                         styleClass="table table-striped table-bordered">
+                <h:column>
+                    <f:facet name="header">Id</f:facet>
+                    #{_appointement.id}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Title</f:facet>
+                    #{_appointement.title}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Location</f:facet>
+                    #{_appointement.location}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Description</f:facet>
+                    #{_appointement.description}
+                </h:column>
+            </h:dataTable>
+        </div>
+    </ui:define>
+</ui:composition>
