@@ -11,8 +11,6 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -27,15 +25,10 @@ public class MemberRepository {
     private EntityManager em;
 
     public void register(Member member) {
-        Principle newPrinciple = null;
-        try {
-            newPrinciple = new Principle(member.getEmail(), sha256Base64((member.getPassword())));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        Principle newPrinciple = new Principle(member.getEmail(), sha256Base64((member.getPassword())));
+
         log.info(String.format("Registering member with E-Mail %s ", newPrinciple.getId(), newPrinciple.getPassword()));
+        em.persist(member);
         em.persist(newPrinciple);
     }
 

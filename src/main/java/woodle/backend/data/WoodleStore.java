@@ -24,10 +24,20 @@ public class WoodleStore {
     @Inject
     Logger log;
 
-    public static String sha256Base64(String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+    public static String sha256Base64(String password) {
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
         digest.reset();
-        byte[] bytes = digest.digest(password.getBytes("UTF-8"));
+        byte[] bytes = new byte[0];
+        try {
+            bytes = digest.digest(password.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
         return byteToBase64(bytes);
     }
 
